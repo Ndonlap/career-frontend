@@ -232,84 +232,33 @@ const Signup = () => {
                   Date of birth
                 </label>
               </div>
-              <div className="relative z-0 w-[80%] mt-5">
+              <div className="relative z-0 w-[30%] mt-1">
                 <div className="w-full ">
                   <input
                     type="file"
-                    className="rounded-xl"
+                    className=""
                     id="lastName"
                     name="lastName"
                     placeholder="Select NIC"
                     onChange={(e) => setNIC(e.target.files[0])}
                     required
                   />
-                  {/* <label
+                  <label
                     for="floating_password"
                     className=" peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                   >
                     NIC
-                  </label> */}
+                  </label>
                 </div>
               </div>
+              {/* <div class="flex items-center">
+    <label for="file-upload" className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+        Upload File
+    </label>
+    <input id="file-upload" type="file" className="hidden"  onChange={(e) => setNIC(e.target.files[0])}/>
+</div> */}
+
             </div>
-
-            {/* </div> */}
-            {/* export const Profile = () => {
-  const [dragging, setDragging] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(countries[0].code);
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    // Handle file upload here
-  };
-
-  const handleBrowseClick = () => {
-    document.getElementById("file-upload").click();
-  };
-return(<section className="bg-white p-6 shadow-md rounded-lg mb-8">
-          <div className="flex items-center mb-4">
-            <span className="bg-green-500 text-white px-3 py-1 rounded-full mr-2">
-              Step 3
-            </span>
-            <h3 className="text-lg font-bold flex items-center">Upload Your CV</h3>
-          </div>
-          <div
-            className={border-2 border-dashed ${dragging ? "border-blue-500" : "border-gray-300"} p-8 rounded-lg text-center}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <div className="flex flex-col items-center">
-              <img
-                src="src/assets/images/file-icon.svg" // Replace with your file icon path
-                alt="File Icon"
-                className="h-12 mb-2"
-              />
-              <p className="text-gray-600">Drag and drop your files here</p>
-              <p className="text-gray-500">or</p>
-              <button
-                type="button"
-                onClick={handleBrowseClick}
-                className="mt-4 rounded-lg bg-[rgba(239,146,115,1)] text-white px-4 py-2 "
-              >
-                Browse Files
-              </button>
-            </div>
-            <input
-              id="file-upload"
-              type="file"
-              className="hidden"
-);}; */}
 
             <Button
               text={"Sign up"}

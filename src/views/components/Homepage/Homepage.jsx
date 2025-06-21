@@ -73,7 +73,7 @@ const Homepage = () => {
       >
         <div className="w-full flex flex-col">
           {/* nav bar */}
-          <nav className="w-full bg-[#000080]  h-[70px] flex justify-between flex-row items-center px-4">
+          <nav className="w-full bg-[#000080]  h-[70px] flex justify-between flex-row  items-center px-4">
          <button>
          <a href="/">
             <img
@@ -139,10 +139,10 @@ const Homepage = () => {
             </div>
           </nav>
           {/* Text inside bg image */}
-          <div className="flex flex-1 flex-row items-center ml-[50px]">
+          <div className="flex flex-1 flex-row items-center ml-[50px] mt-[200px]">
             <div className="flex flex-col w-2/3 text-white gap-[24px] text-justify">
               <h1 className="text-6xl text-white font-semibold">
-                Thanks to the tontine, we realized our project.
+                Thanks to TontiTrack, we realized our project.
               </h1>
               <p>
                 TontiTrack facilitates the management of different activities
@@ -150,12 +150,12 @@ const Homepage = () => {
 
               <div className="flex flex-row gap-[16px]">
                 {/* <Button text={"Go to app"} size={'w-[100px] h-[50px]'} position={"absolute"}/> */}
-                <button className="bg-[#3b9205] h-[48px] w-[150px] rounded-[30px] text-white hover:pointer hover:bg-white hover:text-[#1a5cb9]">
+                <a href="/signup"> <button className="bg-[#3b9205] h-[48px] w-[150px] rounded-[30px] text-white hover:pointer hover:bg-white hover:text-[#1a5cb9]">
                   Go to app
-                </button>
-                <button className="bg-[#000080] h-[48px] w-[150px] rounded-[30px] text-white hover:pointer hover:bg-white hover:text-[#bcdea6]">
-                  Learn more
-                </button>
+                </button></a>
+                <a href= '#Howitworks'><button className="bg-[#000080] h-[48px] w-[150px] rounded-[30px] text-white hover:pointer hover:bg-white hover:text-[#bcdea6]">
+                 Learn more
+                </button></a>
               </div>
             </div>
           </div>
@@ -452,7 +452,7 @@ const Homepage = () => {
               TontiTrack is developed and marketed by Intekor inc
             </p>
             <p className="mb-2">
-              Based in Canada with offices in Yaoundé, Cameroon.
+              Based in Cameroon with offices in Yaoundé, Cameroon.
             </p>
             <p className="mb-2">
               Email:{" "}

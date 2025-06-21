@@ -46,7 +46,7 @@ const Creationform = () => {
   // to handle submit of the creation form
   const handleSubmit = async () => {
     if(agree){
-   console.log(data.token);
+  //  console.log(data.token);
     console.log(dataForm);
     await fetch(`http://localhost:5000/api/tontine/createTontine`, {
       method: 'post',

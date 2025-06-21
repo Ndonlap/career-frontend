@@ -183,7 +183,7 @@ const options = {
           {/* Recent Transactions */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-4">Recent Transactions</h3>
-            {payouts.map((transaction,index) => (
+            {payouts?.map((transaction,index) => (
               <div
                 key={index}
                 className="p-4 bg-white shadow rounded-lg mb-2 flex justify-between items-center"

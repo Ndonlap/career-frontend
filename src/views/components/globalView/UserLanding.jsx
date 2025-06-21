@@ -194,6 +194,8 @@ const UserLanding = () => {
 
     fetchData();
   },[])
+  console.log("tontineNumber");
+  
   return (
     <div className="min-h-screen bg-gray-100 ">
       <nav className="w-[100%] h-[70px] flex justify-between flex-row items-center px-5  bg-white ">
