@@ -3,6 +3,10 @@ import "./App.css";
 import Signup from "./views/components/authViews/Signup";
 import Homepage from "./views/components/Homepage/Homepage";
 import Login from "./views/components/authViews/Login";
+import DashboardLayout from "./views/components/Dashboard/DashboardLayout";
+import DashboardPage from "./views/components/Dashboard/DashboardPage";
+import ManageUsers from "./views/components/Dashboard/ManageUsers";
+import ManageTontine from "./views/components/Dashboard/ManageTontine";
 import Userdecision from "./views/components/memberView/Userdecision";
 import Creationform from "./views/components/presidentView/Creationform";
 import Joinform from "./views/components/memberView/Joinform";
@@ -65,6 +69,11 @@ function App() {
         <Route path="/TontineGroups" element={<TontineGroups />}  />
         <Route path="/member/:id" element={<Member />} />
         <Route path="/TontineReport" element={<TontineReport />} />
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="manage-users" element={<ManageUsers />} />
+          <Route path="manage-tontine" element={<ManageTontine />} />
+        </Route>
       </Route>
     )
   )
