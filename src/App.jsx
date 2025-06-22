@@ -27,6 +27,7 @@ import {
 } from 'react-router-dom'
 // import { Route, BrowserRouter as Router, Routes,Outlet } from "react-router-dom";
 import UserLanding from "./views/components/globalView/UserLanding";
+import VerifyCode from "./views/components/authViews/VerifyCode";
 
 // import { PrimeReactProvider } from 'primereact/api';
 
@@ -46,6 +47,7 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/verify" element={<VerifyCode />} />
         <Route path="/Userdecision" element={<Userdecision />} />
         <Route path="/Creationform" element={<Creationform />} />
         <Route path="/Joinform" element={<Joinform />} />
