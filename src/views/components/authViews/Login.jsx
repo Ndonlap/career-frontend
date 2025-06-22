@@ -113,15 +113,16 @@ const Login = () => {
         localStorage.setItem("tonti_token", data.token);
 
         // Check if user is verified
-        if (data.accountType === "Admin" || data.isLogin === true) {
-          setTimeout(() => {
-            window.location.href = "/UserLanding"; // Go to dashboard
-          }, 1500);
-        } else {
-          setTimeout(() => {
-            window.location.href = "/verify"; // Redirect to verify code
-          }, 1500);
-        }
+        window.location.href = "/verify"; // Redirect to verify code
+        // if (data.accountType === "Admin" || data.isLogin === true) {
+        //   setTimeout(() => {
+        //     window.location.href = "/verify"; // Go to dashboard
+        //   }, 1500);
+        // } else {
+        //   setTimeout(() => {
+        //     window.location.href = "/verify"; // Redirect to verify code
+        //   }, 1500);
+        // }
       } else {
         Swal.fire({
           icon: "error",

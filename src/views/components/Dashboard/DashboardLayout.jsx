@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
-
+import Header from './Header'
 const DashboardLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100 text-gray-800">
@@ -49,10 +49,7 @@ const DashboardLayout = () => {
       {/* Main area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="h-[60px] bg-white shadow px-6 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Admin Dashboard</h2>
-          <div className="text-sm">Welcome back, Admin</div>
-        </header>
+        <Header />
 
         {/* Page Content */}
         <main className="flex-1 p-6 overflow-y-auto">
