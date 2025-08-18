@@ -184,9 +184,9 @@ form .question h6 a{
 .michelle{
     animation: michelle .8s linear infinite alternate;
 }
-#Howitworks{
+/* #Howitworks{
 
-}
+} */
 @keyframes mich {
     from{
         border-color: rgb(255, 225, 0);

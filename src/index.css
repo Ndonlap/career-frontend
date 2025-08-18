@@ -26,4 +26,14 @@ body {
     background: rgb(1, 12, 46);
     border-radius: 8px; /* Reduced for better visual results */
   }
-  
+  @keyframes michelle {
+    from{
+        border-color: cornsilk;
+        transform: scale(1.05);
+        background-color: rgba(178, 196, 233, 0.688);
+    }
+}
+
+.michelle{
+    animation: michelle .8s linear infinite alternate;
+}
