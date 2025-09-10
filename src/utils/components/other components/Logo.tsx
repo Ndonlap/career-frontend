@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import applogo from "../../../assets/images/applogo.png";
+import applogo from '../../../assets/images/applogo.png';
 {/* <div className="flex items-center gap-2 text-2xl font-bold">
           <span className="text-[#c92a2a]">set</span>
             <img
@@ -23,11 +23,13 @@ const Logo: React.FC<LogoProps> = ({
       <span className="text-[#c92a2a]" style={{ color: textColor }}>
         set
       </span>
+     <a href="/StudentDashboard">
       <img
         src={applogo}
         alt="Students Logo"
         className="w-10 rounded-full"
       />
+     </a>
      <span className='text-[#002B5B]' >
          mycareer
      </span>

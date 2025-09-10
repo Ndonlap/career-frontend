@@ -163,34 +163,34 @@ const Dropdown: React.FC = () => {
             <div>
               <p className="font-semibold text-gray-800">Tchouga Serena</p>
               <p className="text-sm text-[#1E3A8A] font-medium cursor-pointer hover:underline">
-                Finish Your Profile
+                Profile
               </p>
             </div>
           </div>
 
           {/* XP Section */}
-          <div className="flex justify-between items-center p-4 border-b">
+          {/* <div className="flex justify-between items-center p-4 border-b">
             <span className="text-sm text-gray-500 font-medium flex items-center gap-1">
               XP
             </span>
             <span className="font-semibold text-[#c92a2a]">5</span>
-          </div>
+          </div> */}
 
           {/* Menu Items */}
           <div className="flex flex-col text-gray-700">
-            <MenuItem icon={<Award size={18} />} text="Get Your Certificates" />
-            <MenuItem icon={<LayoutDashboard size={18} />} text="Your Dashboard" />
+            {/* <MenuItem icon={<Award size={18} />} text="Get Your Certificates" /> */}
+<MenuItem icon={<LayoutDashboard size={18} />} text="Your Dashboard" to="/dashboard" />
             <MenuItem icon={<Trophy size={18} />} text="Your Achievements" />
             <MenuItem icon={<Heart size={18} />} text="Recommended For You" />
             <MenuItem icon={<ClipboardList size={18} />} text="Career Ready Plan" />
-            <MenuItem icon={<FileText size={18} />} text="Create Resumé/CV" badge="New" />
+            {/* <MenuItem icon={<FileText size={18} />} text="Create Resumé/CV" badge="New" /> */}
           </div>
 
           {/* Language Change */}
-          <div className="flex items-center gap-2 p-4 border-t cursor-pointer hover:bg-gray-100">
+          {/* <div className="flex items-center gap-2 p-4 border-t cursor-pointer hover:bg-gray-100">
             <Globe size={18} />
             <span className="text-sm font-medium">Change Language</span>
-          </div>
+          </div> */}
         </div>
       )}
     </div>

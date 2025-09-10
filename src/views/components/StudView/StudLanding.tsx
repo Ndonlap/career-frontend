@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Bar } from "react-chartjs-2";
+import { Pie, Bar, Doughnut } from "react-chartjs-2";
+// import { Line, Pie, Bar } from "react-chartjs-2";
+import { FileText, Lightbulb, Users, BookOpen } from "lucide-react";
 import Logo from "../../../utils/components/other components/Logo";
-import  Explore  from "../../../utils/components/other components/Explore"; // Assuming you have an Explore icon in lucide-react
+import Explore from "../../../utils/components/other components/Explore";
 import Dropdown from "../../../utils/components/other components/Dropdown";
-import Studs from "../../../assets/images/studs.png"; // Assuming you have a Studs image in your assets
+import Studs from "../../../assets/images/studs.png";
 import {
   Chart as ChartJS,
   BarElement,
@@ -11,259 +13,246 @@ import {
   LinearScale,
   Tooltip,
   Legend,
+  ArcElement,
+  ChartData,
+  ChartOptions,
 } from "chart.js";
 
-// Register Chart.js parts once (needed by react-chartjs-2)
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ArcElement);
 
-// TypeScript: define the shape for our booking form state
+// BookingForm type
 type BookingForm = {
   fullName: string;
   email: string;
-  date: string;    // ISO string (yyyy-mm-dd) from <input type="date" />
-  time: string;    // "HH:mm" from <input type="time" />
+  date: string;
+  time: string;
   notes: string;
 };
 
+const StatCard: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+  subtext: string;
+  color: string;
+}> = ({ icon, label, value, subtext, color }) => (
+  <div className="flex items-center gap-4 bg-white rounded-xl shadow-md p-5 hover:shadow-lg transition">
+    <div
+      className={`w-12 h-12 flex items-center justify-center rounded-full text-white ${color}`}
+    >
+      {icon}
+    </div>
+    <div>
+      <h3 className="text-2xl font-bold text-slate-800">{value}</h3>
+      <p className="text-sm text-slate-500">{label}</p>
+      <span className="text-xs text-slate-400">{subtext}</span>
+    </div>
+  </div>
+);
+
 const StudLanding: React.FC = () => {
-  // TypeScript infers `useState<BookingForm>` from the initializer
-  const [form, setForm] = useState<BookingForm>({
-    fullName: "",
-    email: "",
-    date: "",
-    time: "",
-    notes: "",
-  });
 
-  // TS-safe change handler: uses `name` attribute to update corresponding field
-  const handleChange: React.ChangeEventHandler<
-    HTMLInputElement | HTMLTextAreaElement
-  > = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Simple submit handler (replace with API call)
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-    e.preventDefault();
-    // In a real app, POST to your backend here
-    alert(
-      `Session requested:\nName: ${form.fullName}\nEmail: ${form.email}\nDate: ${form.date}\nTime: ${form.time}\nNotes: ${form.notes}`
-    );
-  };
-
-  // Colors (white, red, blue palette)
-  const brand = {
-    blue: "rgb(10, 83, 173)",
-    red: "rgb(220, 38, 38)",
-    lightBlue: "rgb(239, 246, 255)",
-  };
-
-  // Example bar chart data: credibility section
-  // (Feel free to replace with your survey/analytics)
-    // Example bar chart data: colorful credibility section
-  const chartData = {
+  const charData: ChartData<"bar"> = {
     labels: [
-      "Benefited from counseling",
-      "Prefer AI course suggestions",
-      "Prefer aptitude tests",
-      "Prefer virtual sessions",
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ],
     datasets: [
       {
-        label: "Student responses (%)",
-        data: [68, 40, 30, 20],
-        backgroundColor: [
-          "rgba(138, 237, 237)",   // blue-green
-          "rgba(165, 201, 242)",   // blue
-          "rgba(242, 179, 179)",   // red
-          "rgba(168, 217, 240)",  // purple
-        ],
-        borderRadius: 8, // rounded bars
+        label: "Completed",
+        data: [1200, 2000, 2200, 2800, 2500, 1800, 1600, 2000, 3000, 3500, 2700, 3200],
+        backgroundColor: "rgba(255, 124, 91)", // green
+        borderRadius: 6,
+      },
+      {
+        label: "Ongoing",
+        data: [800, 1200, 1100, 1000, 1500, 900, 700, 1000, 1200, 1300, 1000, 1100],
+        backgroundColor: "rgba(59, 130, 246, 0.8)", // blue
+        borderRadius: 6,
+      },
+      {
+        label: "Rescheduled",
+        data: [500, 700, 600, 900, 1200, 500, 400, 800, 1000, 900, 700, 800],
+        backgroundColor: "rgba(168, 85, 247, 0.8)", // purple
+        borderRadius: 6,
       },
     ],
   };
 
-
-    const chartOptions = {
+  const chartOptions: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false as const,
     plugins: {
       legend: {
-        display: false, // hide legend for a cleaner look
+        position: "top",
+        labels: {
+          color: "#374151",
+          font: { size: 12, weight: "bold" },
+          padding: 20,
+        },
       },
-      tooltip: { enabled: true },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+        backgroundColor: "#111827",
+        titleColor: "#fff",
+        bodyColor: "#e5e7eb",
+        cornerRadius: 6,
+      },
+    },
+    interaction: {
+      mode: "nearest",
+      axis: "x",
+      intersect: false,
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 10, color: "#555" },
-        grid: { color: "rgba(200,200,200,0.2)" },
-      },
       x: {
-        ticks: { color: "#555" },
+        stacked: true,
+        ticks: { color: "#6b7280" },
         grid: { display: false },
+      },
+      y: {
+        stacked: true,
+        beginAtZero: true,
+        ticks: { color: "#6b7280" },
+        grid: { color: "rgba(209,213,219,0.3)" },
       },
     },
   };
 
+ 
+ const pieData: ChartData<"doughnut"> = {
+  labels: ["Correct Choice", "Misaligned Choice", "Undecided Students", "More Guidance"],
+  datasets: [
+    {
+      data: [24, 18, 32, 22],
+      backgroundColor: ["#ff6384", "#36a2eb", "#9966ff", "#ffce56"],
+      borderColor: "#fff",
+      borderWidth: 2,
+     
+    },
+  ],
+};
+
+const pieOptions: ChartOptions<"doughnut"> & { cutout?: string | number } = {
+  responsive: true,
+   cutout: "70%", // donut hole size
+  plugins: {
+    legend: { display: false }, // we'll build custom legend
+    tooltip: {
+      backgroundColor: "#1f2937",
+      titleColor: "#fff",
+      bodyColor: "#e5e7eb",
+      padding: 10,
+      cornerRadius: 6,
+    },
+  },
+  animation: {
+    animateRotate: true,
+    animateScale: true,
+  },
+};
+
+
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="h-screen bg-gray-100 text-slate-900">
       {/* NAVBAR */}
-      <header
-        // className="sticky top-0 z-20 bg-white/90 backdrop-blur border-b"
-        // role="navigation"
-        // aria-label="Main menu"
-      >
+      <header>
         <div className="w-full flex items-center justify-between mx-auto max-w-7xl px-4 py-3">
-          <Logo/>
+          <Logo />
           <nav className=" md:flex items-center gap-8">
-            <a className="hover:underline" href="#features">
-              Dashboard
-            </a>
-            <a className="hover:underline" href="#features">
-              <Explore/>
-            </a>
-            <a className="hover:underline" href="#booking">
-              Book a Counselor
-            </a>
-            <Dropdown/>
+            <a className="hover:underline" href="/StudentDashboard">Dashboard</a>
+            <a className="hover:underline" href="#features"><Explore /></a>
+            <a className="hover:underline" href="/BookCounselor">Book a Counselor</a>
+            <Dropdown />
           </nav>
         </div>
       </header>
-      {/* <section>
-        <div className="w-[1250px] h-[100px] bg-[#F2B091] border text-[#002B5B] border-[#002B5B] rounded-md shadow-sm  ml-[140px] mr-2">
-          <div className="font-semibold font-serif text-5xl px-10 py-5">Let's GO</div>
-         
-        </div>
-      </section> */}
-      {/* HERO */}
-      <section
-        aria-label="Hero section"
-        className="relative bg-gradient-to-b from-white to-sky-50"
-      >
-        <div className="mx-auto max-w-7xl px-4 py-20 grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <div>
-            <img src={Studs} alt="studs"
-            className="h-[250px]" />
-          </div>
-            <p className="mt-4 text-slate-600 text-lg">
-              Personalized guidance powered by data-driven recommendations,
-              interest assessments, and expert counseling.
-            </p>
 
-            <div className="mt-8 flex items-center gap-4">
-              <a
-                href="#booking"
-                className="rounded-md bg-blue-800 px-5 py-3 text-white font-semibold hover:bg-[#c92a2a focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 transition"
-              >
-                Book a Counselor
-              </a>
-              <a
-                href="#features"
-                className="rounded-md border border-blue-200 px-5 py-3 text-[#002B5B] font-semibold hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 transition"
-              >
-                Explore Features
-              </a>
-            </div>
-
-            {/* Trust badges */}
-            <div className="mt-6 flex flex-wrap gap-6 text-sm text-slate-500">
-              <span className="inline-flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-red-600" /> Secure &
-                Private
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-blue-600" /> Expert
-                Counselors
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-sky-400" /> Data-Driven
-                Insights
-              </span>
-            </div>
-          </div>
-
-          {/* Hero illustration placeholder */}
-          <div id="insights" className="rounded-lg border bg-white p-6 border-blue-100 shadow-inner ">
-              <h3 className="text-xl font-semibold text-[#002B5B]">
-                Student Impact Snapshot
-              </h3>
-              <p className="mt-1 text-slate-600">
-                Survey insights that show how guidance drives better choices.
-              </p>
-              <div className="mt-6 h-72">
-                <Bar data={chartData} options={chartOptions} />
-              </div>
-              <ul className="mt-4 text-sm text-slate-600 list-disc pl-5">
-                <li>Data-driven recommendations boost confidence.</li>
-                <li>Clearer paths reduce course-switching and delays.</li>
-                <li>Virtual sessions increase access and equity.</li>
-              </ul>
-            </div>
-          </div>
-         {/* Bar chart (credibility / stats) */}
-            
+      {/* STAT CARDS */}
+      <section className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard icon={<FileText size={22} />} label="Uploaded Report Cards" value="12" subtext="last 20 days" color="bg-blue-600" />
+        <StatCard icon={<Lightbulb size={22} />} label="Recommendation Generated" value="8" subtext="this month" color="bg-orange-500" />
+        <StatCard icon={<Users size={22} />} label="Counseling Sessions" value="5" subtext="Scheduled" color="bg-green-500" />
+        <StatCard icon={<BookOpen size={22} />} label="Course Explored" value="20" subtext="Via Dashboard" color="bg-red-600" />
       </section>
-      {/* <div
-            role="img"
-            aria-label="Students exploring courses and careers"
-            className="h-72 md:h-96 rounded-xl bg-[conic-gradient(at_top_left,_#ffffff,_#dbeafe)] "
-            
-          /> */}
 
-      {/* FEATURES */}
-      {/* <section id="features" aria-label="Features" className="py-16 bg-white">
-        <div className="mx-auto max-w-7xl px-4">
-          <h2 className="text-3xl font-bold text-blue-800">Why Students Love It</h2>
-          <p className="mt-2 text-slate-600">
-            A single hub for exploration, assessment, and one-click bookings.
-          </p>
-
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            <div className="rounded-lg border p-6 hover:shadow transition">
-              <h3 className="text-xl font-semibold text-blue-700">
-                Course Recommendations
-              </h3>
-              <p className="mt-2 text-slate-600">
-                Get tailored programs based on your strengths, interests, and
-                academic profile.
-              </p>
-            </div>
-
-            <div className="rounded-lg border p-6 hover:shadow transition">
-              <h3 className="text-xl font-semibold text-blue-700">
-                Career Guidance
-              </h3>
-              <p className="mt-2 text-slate-600">
-                Explore roles, skills required, salary ranges, and job outlooks—
-                all in one place.
-              </p>
-            </div>
-
-            <div className="rounded-lg border p-6 hover:shadow transition">
-              <h3 className="text-xl font-semibold text-blue-700">
-                Expert Counselors
-              </h3>
-              <p className="mt-2 text-slate-600">
-                Book sessions with experienced advisors for personalized
-                support.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* BOOKING */}
+    {/* BAR + PIE CHARTS SIDE BY SIDE */}
+<section className=" px-4 py-5 max-w-7xl mx-auto">
+  <div className="grid md:grid-cols-2 gap-[610px] items-start">
     
+    {/* BAR CHART */}
+    <div
+      id="insights"
+      className="w-[800px] rounded-lg border bg-white p-6 border-blue-100 shadow-md hover:shadow-lg transition transform hover:-translate-y-1"
+    >
+      <h3 className="text-xl font-semibold text-[#002B5B]">Student Impact Snapshot</h3>
+      <p className="mt-1 text-slate-600">
+        Survey insights that show how guidance drives better choices.
+      </p>
+      <div className="mt-6 h-72">
+        <Bar data={charData} options={chartOptions} />
+      </div>
+    </div>
+
+    {/* PIE (DOUGHNUT) CHART */}
+    <div className="mb-4 w-[320px] rounded-lg border bg-white p-6 border-blue-100 shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+      <h3 className="text-xl font-semibold text-[#002B5B]">Resource Distribution</h3>
+      <p className="mt-1 text-slate-600">
+        Breakdown of student academic resources and activities.
+      </p>
+      <div className="relative h-42 flex items-center justify-center">
+        <Doughnut data={pieData} options={pieOptions} />
+        {/* Center Value */}
+        <div className="absolute flex flex-col items-center">
+         {(() => {
+       const dataset = pieData.datasets[0].data as number[];
+       const total = dataset.reduce((a, b) => a + b, 0);
+    return (
+    <>
+      <span className="text-2xl font-extrabold text-slate-800">{total}</span>
+      <span className="text-sm text-slate-500">Total</span>
+    </>
+    );
+    })()}
+        </div>
+      </div>
+
+      {/* Custom Legend */}
+      <div className="grid grid-cols-2 gap-y-3 gap-x-4 mt-6">
+     {(pieData.labels ?? []).map((label, i) => {
+    const dataset = pieData.datasets[0].data as number[];
+    const total = dataset.reduce((a, b) => a + b, 0);
+    const percent = ((dataset[i] / total) * 100).toFixed(0);
+
+    const bgColors = pieData.datasets[0].backgroundColor as string[] | undefined;
+    const color = bgColors?.[i] ?? "#d1d5db"; // fallback color if missing
+
+  return (
+    <div key={`${String(label)}`} className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <span
+          className="w-3 h-3 rounded-full"
+          style={{ backgroundColor: color }}
+        />
+        <span className="text-slate-600 text-sm">{`${String(label)}`}</span>
+      </div>
+      <span className="text-slate-800 font-semibold text-sm">{percent}%</span>
+    </div>
+  );
+})}
+
+
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* FOOTER */}
-      <footer className="mt-16 border-t bg-white">
+      <footer className=" border-t bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-slate-500">
-            © {new Date().getFullYear()} MyCareerCoach — All rights reserved.
-          </p>
+          <p className="text-sm text-slate-500">© {new Date().getFullYear()} MyCareerCoach — All rights reserved.</p>
           <div className="flex items-center gap-6 text-sm">
             <a className="hover:underline" href="#features">Features</a>
             <a className="hover:underline" href="#booking">Book</a>

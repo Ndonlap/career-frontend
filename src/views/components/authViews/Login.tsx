@@ -157,6 +157,7 @@ const Login: React.FC = () => {
             size="w-[80%] h-[40px]"
             type="button"
             onClick={handleSubmit}
+            
           />
 
           {/* Sign Up Link */}

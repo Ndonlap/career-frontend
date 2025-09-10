@@ -8,12 +8,17 @@ import DashboardLayout from "./views/components/Dashboard/DashboardLayout";
 // import DashboardPage from "./views/components/Dashboard/DashboardPage";
 // import ManageUsers from "./views/components/Dashboard/ManageUsers";
 import ManageTontine from "./views/components/Dashboard/ManageTontine";
-// import Userdecision from "./views/components/memberView/Userdecision";
-// import Creationform from "./views/components/presidentView/Creationform";
-// import Joinform from "./views/components/memberView/Joinform";
-// import President from "./views/components/presidentView/President";
-// import Member from "./views/components/memberView/Member";
-// import { getTontineById } from "./apis/tontine";
+import BookCounselor from "./views/components/StudView/BookCounselor";
+import StudentDashboard from "./views/components/StudView/StudentDashboard";
+// import UploadReportCard from "./views/components/StudView/UploadReportCard";
+// import Interest from "./views/components/StudView/Interest";
+// import Recommendation from "./views/components/StudView/Recommendation";
+// import ViewReport from "./views/components/StudView/ViewReport";
+import CounselorDashboard from "./views/components/CounselorView/CounselorDashboard";
+import Services from "./views/components/Homepage/Services";
+import Resources from "./views/components/Homepage/Resources";
+import FAQPage from "./utils/components/other components/FAQPage";
+import Footer from "./utils/components/other components/Footer";
 // import NotificationList from "./views/components/globalView/NotificationList";
 // import Secretarypage from "./views/components/secretaryView/Secretarypage";
 // import Payouts from "./views/components/globalView/Payouts";
@@ -57,10 +62,20 @@ function App() {
           element={<StudLanding />}
         />
         <Route path="/dashboard" element={<DashboardLayout />} />
-         <Route path="ManageTontine" element={<ManageTontine />} />
+         <Route path="/ManageTontine" element={<ManageTontine />} />
+         <Route path="/Bookcounselor" element={<BookCounselor />} />
+         <Route path="/StudentDashboard" element={<StudentDashboard />} />
+         {/* <Route path="/UploadReportCard" element={<UploadReportCard />} /> */}
+         {/* <Route path="/Interest" element={<Interest />} /> */}
+         {/* <Route path="/Recommendation" element={<Recommendation />} /> */}
+         {/* <Route path="/ViewReport" element={<ViewReport />} /> */}
+         <Route path="/CounselorDashboard" element={<CounselorDashboard />} />
+         <Route path="/Services" element={<Services />} />
+         <Route path="/Resources" element={<Resources />} />
+         <Route path="/FAQPage" element={<FAQPage />} />
+         <Route path="/Footer" element={<Footer />} />
         {/* 
-        <Route path="/verify" element={<VerifyCode />} />
-        <Route path="/Userdecision" element={<Userdecision />} />
+        
         <Route path="/Creationform" element={<Creationform />} />
         <Route path="/Joinform" element={<Joinform />} />
         <Route path="/President" element={<President />} />
