@@ -46,7 +46,7 @@ const ResourcesPage: React.FC = () => {
   return (
     <section className="px-6 lg:px-24 py-16 bg-slate-50">
       {/* Header */}
-      <div className="text-center mb-12">
+      <div id="Resources" className="text-center mb-12">
         <h2 className="text-3xl lg:text-4xl font-extrabold text-blue-900">
           Latest News & Resources
         </h2>

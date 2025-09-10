@@ -4,13 +4,12 @@ import Signup from "./views/components/authViews/Signup";
 import Homepage from "./views/components/Homepage/Homepage";
 import Login from "./views/components/authViews/Login";
 import StudLanding  from "./views/components/StudView/StudLanding";
-import DashboardLayout from "./views/components/Dashboard/DashboardLayout";
+import AdminDashboard from "./views/components/Dashboard/AdminDashboard";
 // import DashboardPage from "./views/components/Dashboard/DashboardPage";
 // import ManageUsers from "./views/components/Dashboard/ManageUsers";
-import ManageTontine from "./views/components/Dashboard/ManageTontine";
+// import ManageTontine from "./views/components/Dashboard/ManageTontine";
 import BookCounselor from "./views/components/StudView/BookCounselor";
 import StudentDashboard from "./views/components/StudView/StudentDashboard";
-// import UploadReportCard from "./views/components/StudView/UploadReportCard";
 // import Interest from "./views/components/StudView/Interest";
 // import Recommendation from "./views/components/StudView/Recommendation";
 // import ViewReport from "./views/components/StudView/ViewReport";
@@ -61,11 +60,9 @@ function App() {
           path="/studLanding"
           element={<StudLanding />}
         />
-        <Route path="/dashboard" element={<DashboardLayout />} />
-         <Route path="/ManageTontine" element={<ManageTontine />} />
          <Route path="/Bookcounselor" element={<BookCounselor />} />
          <Route path="/StudentDashboard" element={<StudentDashboard />} />
-         {/* <Route path="/UploadReportCard" element={<UploadReportCard />} /> */}
+         <Route path="/AdminDashboard" element={<AdminDashboard />} />
          {/* <Route path="/Interest" element={<Interest />} /> */}
          {/* <Route path="/Recommendation" element={<Recommendation />} /> */}
          {/* <Route path="/ViewReport" element={<ViewReport />} /> */}

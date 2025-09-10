@@ -73,8 +73,8 @@ const HomePage: React.FC = () => {
         <nav className="hidden lg:flex gap-6 font-medium text-sm">
           <a href="/" className="hover:text-[#c92a2a] transition">Home</a>
           <a href="#Services" className="hover:text-[#c92a2a] transition">Services</a>
-          <a href="#" className="hover:text-[#c92a2a] transition">Testimonials</a>
-          <a href="#" className="hover:text-[#c92a2a] transition">Resources</a>
+          <a href="#Resources" className="hover:text-[#c92a2a] transition">Resources</a>
+          <a href="#Testimonial" className="hover:text-[#c92a2a] transition">Testimonials</a>
           <a href="#" className="hover:text-[#c92a2a] transition">About Us</a>
           <a href="#" className="hover:text-[#c92a2a] transition">Contact Us</a>
         </nav>

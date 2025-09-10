@@ -39,7 +39,7 @@ const FAQPage: React.FC = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="w-full h-full p-8 shadow-md bg-slate-50">
+      <div id="Testimonial" className="w-full h-full p-8 shadow-md bg-slate-50">
         <h1
           id="FAQ"
           className="text-4xl text-center font-bold mb-6 text-[#000080]"
