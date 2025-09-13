@@ -63,34 +63,11 @@ function App() {
          <Route path="/Bookcounselor" element={<BookCounselor />} />
          <Route path="/StudentDashboard" element={<StudentDashboard />} />
          <Route path="/AdminDashboard" element={<AdminDashboard />} />
-         {/* <Route path="/Interest" element={<Interest />} /> */}
-         {/* <Route path="/Recommendation" element={<Recommendation />} /> */}
-         {/* <Route path="/ViewReport" element={<ViewReport />} /> */}
          <Route path="/CounselorDashboard" element={<CounselorDashboard />} />
          <Route path="/Services" element={<Services />} />
          <Route path="/Resources" element={<Resources />} />
          <Route path="/FAQPage" element={<FAQPage />} />
          <Route path="/Footer" element={<Footer />} />
-        {/* 
-        
-        <Route path="/Creationform" element={<Creationform />} />
-        <Route path="/Joinform" element={<Joinform />} />
-        <Route path="/President" element={<President />} />
-        <Route path="/NotificationList"
-          element={<NotificationList />}
-        />
-       
-        <Route path="/Secretarypage" element={<Secretarypage />} />
-        <Route path="/Payouts" element={<Payouts />} />
-        <Route path="/MakeContribution" element={<MakeContribution />} />
-        <Route path="/TontineGroups" element={<TontineGroups />}  />
-        <Route path="/member/:id" element={<Member />} />
-        <Route path="/TontineReport" element={<TontineReport />} />
-        
-          <Route index element={<DashboardPage />} />
-          <Route path="manage-users" element={<ManageUsers />} />
-         
-        </Route> */}
       </Route>
     )
   )
