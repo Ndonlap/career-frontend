@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 
 // Import the app logo and Button component
 import applogo from "../../../assets/images/applogo.png";
 import Button from "../../../utils/components/Buttons/Buttons";
+
+// Import the AuthService
+import AuthService from "../../../services/auth"; // Adjust path as needed
 
 // Type definition for the form data
 interface FormData {
@@ -17,7 +21,8 @@ const Login: React.FC = () => {
     password: "",
   });
 
-  const [agree, setAgree] = useState<boolean>(false);
+  const [agree, setAgree] = useState<boolean>(false); // Still here if you decide to uncomment it
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -28,6 +33,7 @@ const Login: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    // Uncomment this block if you re-enable the terms and conditions checkbox
     // if (!agree) {
     //   Swal.fire({
     //     icon: "warning",
@@ -49,43 +55,41 @@ const Login: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      // Use AuthService.login instead of raw fetch
+      const response = await AuthService.login({ email, password });
+      const { access_token, refresh_token, role } = response.data;
+
+      // Store tokens and role using AuthService helper
+      AuthService.setTokens(access_token, refresh_token, role);
+
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: `Welcome, ${role}!`, // You can customize this message
+        timer: 1500,
+        showConfirmButton: false,
       });
 
-      const data = await response.json();
-
-      if (data.token) {
-        Swal.fire({
-          icon: "success",
-          title: "Login Successful",
-          text: data.message,
-          timer: 1500,
-          showConfirmButton: false,
-        });
-
-        sessionStorage.setItem("user", JSON.stringify(data));
-        localStorage.setItem("tonti_token", data.token);
-
-        window.location.href = "/verify";
+      // Redirect based on user role
+      if (role === 'student') {
+        navigate('/StudentDashboard');
+      } else if (role === 'counselor') {
+        navigate('/CounselorDashboard');
+      } else if (role === 'admin') {
+        navigate('/AdminDashboard');
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Login Failed",
-          text: data.error || "Invalid email or password.",
-        });
+        navigate('/'); // Fallback for unknown roles
       }
-    } catch (error) {
+
+    } catch (error: any) {
       console.error("Login error:", error);
+      // Access error response from Axios (if available)
+      const errorMessage = error.response?.data?.msg || error.message || "Invalid email or password.";
+      
       Swal.fire({
         icon: "error",
         title: "Login Failed",
-        text: "Invalid email or password.",
+        text: errorMessage,
       });
     }
   };
@@ -155,9 +159,8 @@ const Login: React.FC = () => {
           <Button
             text="Login"
             size="w-[80%] h-[40px]"
-            type="button"
+            type="button" // Keep as button if you manually handle click
             onClick={handleSubmit}
-            
           />
 
           {/* Sign Up Link */}
