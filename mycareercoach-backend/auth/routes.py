@@ -5,7 +5,7 @@ from extensions import jwt # Import JWTManager instance
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from datetime import datetime
 from extensions import mongo 
-
+import json
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -58,9 +58,15 @@ def login():
         {"_id": user._id},
         {"$set": {"last_login_at": datetime.utcnow()}}
     )
+    # Convert identity to JSON string
+    identity_data = {'id': str(user._id), 'role': user.role}
+    identity_str = json.dumps(identity_data)  # Convert to string
+    
+    access_token = create_access_token(identity=identity_str)
+    refresh_token = create_refresh_token(identity=identity_str)
 
-    access_token = create_access_token(identity={'id': str(user._id), 'role': user.role})
-    refresh_token = create_refresh_token(identity={'id': str(user._id), 'role': user.role})
+    # access_token = create_access_token(identity={'id': str(user._id), 'role': user.role})
+    # refresh_token = create_refresh_token(identity={'id': str(user._id), 'role': user.role})
     return jsonify(access_token=access_token, refresh_token=refresh_token, role=user.role), 200
 
 @auth_bp.route('/refresh', methods=['POST'])

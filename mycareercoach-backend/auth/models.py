@@ -121,16 +121,26 @@ class User:
     def find_by_id(cls, user_id):
         user_data = mongo.db[cls.collection_name].find_one({"_id": ObjectId(user_id)})
         if user_data:
+            kwargs = user_data.copy()
+            # Remove the fields that are passed as explicit parameters
+            kwargs.pop('email', None)
+            kwargs.pop('role', None)
+            kwargs.pop('first_name', None)
+            kwargs.pop('last_name', None)
+            kwargs.pop('password_hash', None)  # We handle this separately
+            kwargs.pop('_id', None)  # We handle this separately
+            
+            # Reconstruct a User object from MongoDB data
             user = cls(
                 email=user_data['email'],
-                password='dummy_password_no_hash_needed',
+                password='dummy_password_no_hash_needed', # Placeholder, hash is already in DB
                 role=user_data['role'],
                 first_name=user_data.get('first_name'),
                 last_name=user_data.get('last_name'),
-                **user_data
+                **kwargs # Pass only the remaining fields as kwargs
             )
-            user.password_hash = user_data['password_hash']
-            user._id = user_data['_id']
+            user.password_hash = user_data['password_hash'] # Set the hash directly
+            user._id = user_data['_id'] # Set the MongoDB _id
             return user
         return None
 

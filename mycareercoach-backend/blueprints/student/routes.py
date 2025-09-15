@@ -7,6 +7,7 @@ from datetime import datetime, date, timedelta
 from werkzeug.utils import secure_filename
 import os
 import random # For random questions later
+import json
 
 # Import models
 from auth.models import User
@@ -188,45 +189,67 @@ def get_recent_achievements(student_id):
     ]
 
 def get_upcoming_events(student_id):
-    # This would come from querying the appointments collection for upcoming sessions,
-    # and potentially a separate events/deadlines collection.
+    """Fetch upcoming appointments and deadlines for the student."""
+    upcoming_events = []
     
-    # Fetch upcoming appointments for the student
+    # Use datetime.utcnow() instead of datetime.date.today()
+    today = datetime.utcnow()
+    
+    # Fetch upcoming appointments
     upcoming_appointments_db = mongo.db.appointments.find({
         "student_id": ObjectId(student_id),
-        "date": {"$gte": datetime.now().date()}, # Appointments from today onwards
+        "date": {"$gte": today},  # Use datetime object, not date object
         "status": {"$in": ["pending", "confirmed"]}
-    }).sort([("date", 1), ("time", 1)]) # Sort by soonest
-
-    events = []
+    }).sort("date", 1).sort("time", 1).limit(5)
+    
     for app in upcoming_appointments_db:
-        app_date = app['date'].strftime('%b %d')
-        events.append({
-            "title": f"{app['type']} with Counselor",
-            "date": app_date,
-            "priority": app['priority'],
-            "type": "appointment"
+        # Convert datetime objects to strings for JSON serialization
+        event_date = app['date'].isoformat() if isinstance(app['date'], datetime) else app['date']
+        
+        upcoming_events.append({
+            "type": "Appointment",
+            "title": f"Session with {app.get('counselor_name', 'Counselor')}",
+            "date": event_date,
+            "time": app.get('time', ''),
+            "status": app.get('status', ''),
+            "icon": "Calendar", # Assuming you have an icon mapping
+            "color": "blue" if app.get('status') == 'confirmed' else "gray"
         })
     
-    # Add mock fixed events
-    events.extend([
-        {"title": "Final Project Submission", "date": "Dec 15", "priority": "high", "type": "deadline"},
-        {"title": "Career Fair", "date": "Dec 18", "priority": "medium", "type": "event"},
-        {"title": "Internship Application", "date": "Dec 22", "priority": "high", "type": "application"},
-        {"title": "Thesis Proposal Review", "date": "Jan 05", "priority": "medium", "type": "academic"}
-    ])
+    # You might also want to add academic deadlines, events, etc.
+    # Example: Fetch upcoming deadlines from academic_records or a dedicated events collection
+    upcoming_deadlines_db = mongo.db.academic_records.find({
+        "student_id": ObjectId(student_id),
+        "deadline": {"$gte": today},  # Use datetime object
+        "completed": False
+    }).sort("deadline", 1).limit(3)
     
-    # Sort all events by date (if date is comparable)
-    events.sort(key=lambda x: datetime.strptime(x['date'] + ' 2025', '%b %d %Y')) # Assuming current year for mock dates
-    return events
-
+    for deadline in upcoming_deadlines_db:
+        if 'deadline' in deadline:
+            deadline_date = deadline['deadline'].isoformat() if isinstance(deadline['deadline'], datetime) else deadline['deadline']
+            
+            upcoming_events.append({
+                "type": "Deadline",
+                "title": f"{deadline.get('subject', 'Assignment')} Due",
+                "date": deadline_date,
+                "time": "", # Or extract time if available
+                "status": "pending",
+                "icon": "Clock",
+                "color": "red"
+            })
+    
+    # Sort all events by date
+    upcoming_events.sort(key=lambda x: x['date'])
+    
+    return upcoming_events[:5]  # Return top 5 events
 
 # --- Routes ---
 
 @student_bp.route('/profile', methods=['GET'])
 @jwt_required()
 def get_student_profile():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     user_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -242,7 +265,8 @@ def get_student_profile():
 @student_bp.route('/profile', methods=['PUT'])
 @jwt_required()
 def update_student_profile():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     user_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -271,7 +295,8 @@ def update_student_profile():
 @student_bp.route('/interests', methods=['POST'])
 @jwt_required()
 def submit_student_interests():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     user_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -303,7 +328,8 @@ def submit_student_interests():
 @student_bp.route('/academic_records', methods=['GET'])
 @jwt_required()
 def get_student_academic_records():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     user_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -317,7 +343,8 @@ def get_student_academic_records():
 @student_bp.route('/upload_report_card', methods=['POST'])
 @jwt_required()
 def upload_report_card():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -365,7 +392,8 @@ def upload_report_card():
 @student_bp.route('/book_counseling_session', methods=['POST'])
 @jwt_required()
 def book_counseling_session():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -414,7 +442,8 @@ def book_counseling_session():
 @student_bp.route('/my_bookings', methods=['GET'])
 @jwt_required()
 def get_student_bookings():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -439,7 +468,8 @@ def get_student_bookings():
 @student_bp.route('/recommendations/summary', methods=['GET'])
 @jwt_required()
 def get_student_recommendations_summary():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -461,7 +491,8 @@ def get_student_recommendations_summary():
 @student_bp.route('/recommendations/detailed/<rec_id>', methods=['GET'])
 @jwt_required()
 def get_student_detailed_recommendation(rec_id):
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -485,7 +516,8 @@ def get_student_detailed_recommendation(rec_id):
 @student_bp.route('/dashboard_summary', methods=['GET'])
 @jwt_required()
 def get_student_dashboard_summary():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -540,7 +572,8 @@ def get_student_dashboard_summary():
 @student_bp.route('/performance_analytics', methods=['GET'])
 @jwt_required()
 def get_performance_analytics():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -554,7 +587,9 @@ def get_performance_analytics():
 @student_bp.route('/landing_page_stats', methods=['GET'])
 @jwt_required()
 def get_student_landing_page_stats():
-    current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
+    
     student_id = current_user_identity['id']
     user_role = current_user_identity['role']
 
@@ -566,7 +601,7 @@ def get_student_landing_page_stats():
     recommendations_generated_count = mongo.db.recommendations.count_documents({"student_id": ObjectId(student_id), "status": {"$in": ["Generated", "Approved", "Delivered"]}})
     counseling_sessions_count = mongo.db.appointments.count_documents({"student_id": ObjectId(student_id), "status": {"$in": ["pending", "confirmed", "completed"]}})
     courses_explored_count = mongo.db.users.count_documents({"_id": ObjectId(student_id), "interests": {"$ne": {}}}) # Simplified: if interests are set
-
+    print("stat_cards")
     stat_cards = {
         "uploaded_report_cards": uploaded_reports_count,
         "recommendations_generated": recommendations_generated_count,
