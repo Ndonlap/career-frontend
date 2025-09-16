@@ -48,8 +48,8 @@ def create_assessment():
     if not all([name, description, assessment_type, questions_data]):
         return jsonify({"msg": "Missing required fields: name, description, type, questions"}), 400
 
-    # Validate questions structure
-    for q_data in questions_data:
+    # Validate questions structure and generate _id for each question
+    for i, q_data in enumerate(questions_data):
         if not all([q_data.get('text'), q_data.get('options') and isinstance(q_data['options'], list)]):
             return jsonify({"msg": "Each question must have 'text' and 'options'"}), 400
         if assessment_type in ["aptitude", "quiz"] and not q_data.get('correct_answer'):
@@ -58,6 +58,10 @@ def create_assessment():
         # Convert options to list if not already
         if isinstance(q_data['options'], str):
             q_data['options'] = [opt.strip() for opt in q_data['options'].split(',')]
+        
+        # Generate _id for each question if not provided
+        if '_id' not in q_data:
+            q_data['_id'] = ObjectId()  # Generate new ObjectId for each question
 
     current_user_identity = get_jwt_identity()
     if isinstance(current_user_identity, str):
@@ -73,7 +77,7 @@ def create_assessment():
             duration_minutes=duration_minutes,
             number_of_questions=len(questions_data),
             created_by=created_by_id,
-            questions=questions_data, # These will be stored as dicts
+            questions=questions_data, # These will be stored as dicts with _id
             status=status
         )
         assessment_id = new_assessment.save()
@@ -81,6 +85,7 @@ def create_assessment():
     except Exception as e:
         current_app.logger.error(f"Error creating assessment: {e}")
         return jsonify({"msg": f"Error creating assessment: {str(e)}"}), 500
+
 
 @assessments_bp.route('/admin/assessments', methods=['GET'])
 @jwt_required()
@@ -172,15 +177,21 @@ def update_assessment(assessment_id):
     if 'duration_minutes' in data: update_fields['duration_minutes'] = data['duration_minutes']
     if 'status' in data: update_fields['status'] = data['status']
     
-    # Handle questions update (can be complex: full replacement or partial update)
+    # Handle questions update
     if 'questions' in data:
-        # This assumes a full replacement of the questions array
         questions_data = data.get('questions', [])
+        
+        # Validate and generate _id for new questions
         for q_data in questions_data:
             if not all([q_data.get('text'), q_data.get('options') and isinstance(q_data['options'], list)]):
                 return jsonify({"msg": "Each question must have 'text' and 'options'"}), 400
-            if q_data.get('options') and isinstance(q_data['options'], str):
+            
+            if isinstance(q_data['options'], str):
                 q_data['options'] = [opt.strip() for opt in q_data['options'].split(',')]
+            
+            # Generate _id for new questions that don't have one
+            if '_id' not in q_data:
+                q_data['_id'] = ObjectId()
 
         update_fields['questions'] = questions_data
         update_fields['number_of_questions'] = len(questions_data)
@@ -201,7 +212,8 @@ def update_assessment(assessment_id):
     except Exception as e:
         current_app.logger.error(f"Error updating assessment: {e}")
         return jsonify({"msg": f"Error updating assessment: {str(e)}"}), 500
-
+    
+    
 @assessments_bp.route('/admin/assessments/<assessment_id>', methods=['DELETE'])
 @jwt_required()
 def delete_assessment(assessment_id):
@@ -261,8 +273,30 @@ def start_assessment(assessment_id):
     if not assessment_data:
         return jsonify({"msg": "Assessment not found or not published"}), 404
 
-    assessment_obj = Assessment(created_by=str(assessment_data['created_by']), **assessment_data)
+    kwargs = assessment_data.copy()
+    # Remove fields that will be passed as explicit parameters
+    fields_to_remove = ["name","description","type","duration_minutes","number_of_questions","created_by","questions","status"]
+    for field in fields_to_remove:
+        kwargs.pop(field, None)
+    print("assessment_data['questions']",assessment_data['questions'])
+    assessment_obj = Assessment(
+        name=assessment_data['name'],
+        description=assessment_data['description'],
+        type=assessment_data['type'],
+        duration_minutes=assessment_data['duration_minutes'],
+        number_of_questions=assessment_data['number_of_questions'],
+        created_by=str(assessment_data['created_by']),
+        questions=assessment_data['questions'],
+        status=assessment_data.get('status', 'draft'),
+        **kwargs
+    )
     
+    assessment_obj._id = str(assessment_data['_id'])
+    assessment_obj.created_at = assessment_data.get('created_at', datetime.utcnow())
+    assessment_obj.updated_at = assessment_data.get('updated_at', datetime.utcnow())
+    
+    # assessments_list.append(assessment_obj.to_dict())
+        
     # Get random questions, ensuring correct answers are not exposed
     questions_for_student = assessment_obj.get_random_questions(assessment_id, num_questions)
 
@@ -299,13 +333,36 @@ def submit_assessment(assessment_id):
     if not assessment_data:
         return jsonify({"msg": "Assessment not found or not published"}), 404
     
-    assessment_obj = Assessment(created_by=str(assessment_data['created_by']), **assessment_data)
+    kwargs = assessment_data.copy()
+    # Remove fields that will be passed as explicit parameters
+    fields_to_remove = ["name","description","type","duration_minutes","number_of_questions","created_by","questions","status"]
+    for field in fields_to_remove:
+        kwargs.pop(field, None)
+    
+    assessment_obj = Assessment(
+        name=assessment_data['name'],
+        description=assessment_data['description'],
+        type=assessment_data['type'],
+        duration_minutes=assessment_data['duration_minutes'],
+        number_of_questions=assessment_data['number_of_questions'],
+        created_by=str(assessment_data['created_by']),
+        questions=assessment_data['questions'],
+        status=assessment_data.get('status', 'draft'),
+        **kwargs
+    )
+    
+    assessment_obj._id = str(assessment_data['_id'])
+    assessment_obj.created_at = assessment_data.get('created_at', datetime.utcnow())
+    assessment_obj.updated_at = assessment_data.get('updated_at', datetime.utcnow())
     
     score = 0
     total_points_possible = 0
     processed_answers = []
     
     # Map original questions by ID for easy lookup
+    print(assessment_obj.questions)
+    print("assessment_obj.questions")
+    print(student_answers)
     original_questions_map = {str(q['_id']): q for q in assessment_obj.questions}
 
     for submitted_answer in student_answers:
@@ -417,7 +474,23 @@ def get_student_assessment_results():
         assessment = mongo.db.assessments.find_one({"_id": ObjectId(res_data['assessment_id'])})
         res_data['assessment_name'] = assessment['name'] if assessment else 'Unknown Assessment'
         
-        res_obj = AssessmentResult(student_id=str(res_data['student_id']), assessment_id=str(res_data['assessment_id']), submission_date=res_data['submission_date'], answers=res_data['answers'], **res_data)
+        kwargs = res_data.copy()
+        # Remove fields that will be passed as explicit parameters
+        fields_to_remove = ["student_id","assessment_id","submission_date","answers",]
+        for field in fields_to_remove:
+            kwargs.pop(field, None)
+        res_obj = AssessmentResult(
+            student_id=str(res_data['student_id']),
+            assessment_id=str(res_data['assessment_id']),
+            submission_date=res_data['submission_date'],
+            answers=res_data['answers'],
+            **kwargs
+            )
+        print("res_data",res_data)
+        print("res_data",res_obj)
+        # res_obj.id = res_data['_id']
+        res_obj._id = res_data['_id']
+        print("res_obj",res_obj)
         results_list.append(res_obj.to_dict())
         
     return jsonify(results_list), 200
@@ -433,7 +506,8 @@ def get_single_student_assessment_result(result_id):
         current_user_identity = json.loads(current_user_identity)
     
     student_id = current_user_identity['id']
-
+    print("result_id")
+    print(result_id)
     result_data = mongo.db.assessment_results.find_one(
         {"_id": ObjectId(result_id), "student_id": ObjectId(student_id)}
     )
@@ -460,7 +534,98 @@ def get_single_student_assessment_result(result_id):
                 detailed_questions.append(q_detail)
         result_data['detailed_questions'] = detailed_questions
 
-
-    result_obj = AssessmentResult(student_id=str(result_data['student_id']), assessment_id=str(result_data['assessment_id']), submission_date=result_data['submission_date'], answers=result_data['answers'], **result_data)
+    kwargs = result_data.copy()
+    # Remove fields that will be passed as explicit parameters
+    fields_to_remove = ["student_id","assessment_id","submission_date","answers",]
+    for field in fields_to_remove:
+        kwargs.pop(field, None)
+    result_obj = AssessmentResult(
+        student_id=str(result_data['student_id']),
+        assessment_id=str(result_data['assessment_id']),
+        submission_date=result_data['submission_date'],
+        answers=result_data['answers'],
+        **kwargs
+        )
     
     return jsonify(result_obj.to_dict()), 200
+
+@assessments_bp.route('/student/results/summary', methods=['GET'])
+@jwt_required()
+def get_student_assessment_results_summary():
+    """Get summary of student assessment results for display"""
+    error = check_student_role()
+    if error: return error
+
+    current_user_identity = get_jwt_identity()
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    
+    student_id = current_user_identity['id']
+
+    try:
+        # Get results with assessment names
+        results_cursor = mongo.db.assessment_results.aggregate([
+            {"$match": {"student_id": ObjectId(student_id)}},
+            {"$lookup": {
+                "from": "assessments",
+                "localField": "assessment_id",
+                "foreignField": "_id",
+                "as": "assessment"
+            }},
+            {"$unwind": "$assessment"},
+            {"$sort": {"submission_date": -1}},
+            {"$project": {
+                "_id": 1,
+                "assessment_id": 1,
+                "assessment_name": "$assessment.name",
+                "submission_date": 1,
+                "score": 1,
+                "total_points_possible": 1,
+                "status": 1
+            }}
+        ])
+        
+        results_list = list(results_cursor)
+        
+        # Convert ObjectId to string
+        for result in results_list:
+            result['id'] = str(result['_id'])
+            result['assessment_id'] = str(result['assessment_id'])
+        
+        return jsonify(results_list), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error fetching assessment results summary: {e}")
+        return jsonify({"msg": "Failed to fetch assessment results"}), 500
+    
+@assessments_bp.route('/student/assessment/<assessment_id>/status', methods=['GET'])
+@jwt_required()
+def get_assessment_status(assessment_id):
+    """Check if student has completed an assessment"""
+    error = check_student_role()
+    if error: return error
+
+    current_user_identity = get_jwt_identity()
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    
+    student_id = current_user_identity['id']
+
+    try:
+        result = mongo.db.assessment_results.find_one({
+            "student_id": ObjectId(student_id),
+            "assessment_id": ObjectId(assessment_id)
+        })
+        
+        return jsonify({
+            "completed": result is not None,
+            "result_id": str(result['_id']) if result else None
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Error checking assessment status: {e}")
+        return jsonify({"msg": "Failed to check assessment status"}), 500
+    
+    
+    
+    

@@ -46,8 +46,16 @@ class Assessment:
         self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
         self._id = None
+        self._ensure_question_ids()
+    
+    def _ensure_question_ids(self):
+        """Ensure each question has an _id field"""
+        for i, question in enumerate(self.questions):
+            if '_id' not in question:
+                question['_id'] = ObjectId()
 
     def save(self):
+        self._ensure_question_ids()
         doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
         doc['created_by'] = ObjectId(doc['created_by'])
         result = mongo.db[self.collection_name].insert_one(doc)
@@ -72,8 +80,8 @@ class Assessment:
             for q in random_questions:
                 q.pop('correct_answer', None)
                 q.pop('explanation', None)
-                q['id'] = str(q['_id']) # Convert ObjectId
-                q.pop('_id') # Remove raw ObjectId from output
+                q['_id'] = str(q['_id']) # Convert ObjectId
+                # q.pop('_id',None) # Remove raw ObjectId from output
             return random_questions
         return []
 
@@ -113,7 +121,7 @@ class AssessmentResult:
         self.insights = kwargs.get('insights', {}) # e.g., {"strengths": [], "weaknesses": []}
         self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
-        self._id = None
+        self._id =  kwargs.get('_id', None)
 
     def save(self):
         doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
@@ -124,8 +132,9 @@ class AssessmentResult:
         return self._id
 
     def to_dict(self):
-        doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
-        doc['id'] = str(doc.pop('_id')) if '_id' in doc else None
+        doc = {k: v for k, v in self.__dict__.items()}
+        doc['id'] = str(doc['_id'])
+        doc['_id'] = str(doc['_id'])
         doc['student_id'] = str(doc['student_id'])
         doc['assessment_id'] = str(doc['assessment_id'])
         doc['submission_date'] = doc['submission_date'].isoformat()

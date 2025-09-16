@@ -71,7 +71,7 @@ function App() {
           <Route path="assessments" element={<Outlet />} > {/* Nested route for assessments */}
             <Route index element={<AssessmentPage />} /> {/* Lists available assessments */}
             <Route path=":assessmentId/start" element={<AptitudeTestPage />} /> {/* Route for taking an assessment */}
-            <Route path=":assessmentId/result" element={<AptitudeTestResult />} /> {/* Route for displaying results */}
+            <Route path=":resultId/results" element={<AptitudeTestResult />} /> {/* Route for displaying results */}
           </Route>
 
           <Route path="recommendations" element={<RecommendationPage />} />

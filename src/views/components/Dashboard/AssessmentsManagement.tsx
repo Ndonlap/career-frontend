@@ -1,16 +1,17 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { Brain, PlusCircle, Eye, Edit, Trash2, Loader2, BookOpen } from "lucide-react";
+import { Brain, PlusCircle, Eye, Edit, Trash2, Loader2, BookOpen, BarChart3, Users, Download } from "lucide-react";
 import { useAdminDashboard } from './AdminDashboardLayout';
 import { useNavigate } from 'react-router-dom';
 
 import AdminService from "../../../services/admin";
+import AssessmentService from "../../../services/assessments"; // Import the assessment service
 import Swal from "sweetalert2";
 
 interface AssessmentQuestion {
-  id?: string; // Optional for new questions
+  _id?: string;
   text: string;
   options: string[];
-  correct_answer?: string; // For scored tests
+  correct_answer?: string | string[];
   category?: string;
   difficulty?: string;
   points?: number;
@@ -18,23 +19,29 @@ interface AssessmentQuestion {
 }
 
 interface Assessment {
-  id: string;
+  _id: string;
+  id?: string;
   name: string;
   description: string;
   type: "aptitude" | "interest" | "personality" | "quiz";
   duration_minutes: number;
   number_of_questions: number;
   status: "draft" | "published" | "archived";
-  questions?: AssessmentQuestion[]; // Include questions for admin view
+  questions?: AssessmentQuestion[];
+  created_by?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const AssessmentsManagement: React.FC = () => {
   const navigate = useNavigate();
-  const { fetchDashboardData } = useAdminDashboard(); // To trigger dashboard refresh for badges
+  const { fetchDashboardData } = useAdminDashboard();
 
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<any>(null);
+  const [showStats, setShowStats] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -46,7 +53,7 @@ const AssessmentsManagement: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await AdminService.getAllAssessments(); // This fetches with solutions for admin
+      const response = await AdminService.getAllAssessments();
       setAssessments(response.data);
     } catch (err: any) {
       console.error("Error fetching assessments:", err);
@@ -56,32 +63,62 @@ const AssessmentsManagement: React.FC = () => {
     }
   };
 
+  const fetchAssessmentStats = async () => {
+    try {
+      // This would need to be implemented in your backend
+      // For now, we'll calculate basic stats from the assessments
+      const stats = {
+        total_assessments: assessments.length,
+        published: assessments.filter(a => a.status === 'published').length,
+        draft: assessments.filter(a => a.status === 'draft').length,
+        archived: assessments.filter(a => a.status === 'archived').length,
+        total_questions: assessments.reduce((sum, a) => sum + a.number_of_questions, 0)
+      };
+      setStats(stats);
+    } catch (err: any) {
+      console.error("Error fetching stats:", err);
+    }
+  };
+
   useEffect(() => {
     fetchAssessments();
   }, []);
+
+  useEffect(() => {
+    if (assessments.length > 0) {
+      fetchAssessmentStats();
+    }
+  }, [assessments]);
 
   const handleAddAssessment = () => {
     setIsEditing(false);
     setCurrentAssessment({
       name: '',
       description: '',
-      type: 'aptitude', // Default
+      type: 'aptitude',
       duration_minutes: 30,
       number_of_questions: 0,
       status: 'draft',
-      questions: [{ text: '', options: ['', ''], correct_answer: '', category: 'General' }], // Start with one blank question
+      questions: [{ text: '', options: ['', ''], correct_answer: '', category: 'General' }],
     });
     setShowModal(true);
   };
 
   const handleEditAssessment = (assessment: Assessment) => {
     setIsEditing(true);
-    // Deep copy questions to avoid direct state mutation
     setCurrentAssessment({
       ...assessment,
       questions: assessment.questions ? JSON.parse(JSON.stringify(assessment.questions)) : [],
     });
     setShowModal(true);
+  };
+
+  const handleViewAssessment = (assessmentId: string) => {
+    navigate(`/AdminDashboard/assessments/${assessmentId}`);
+  };
+
+  const handleViewAnalytics = (assessmentId: string) => {
+    navigate(`/AdminDashboard/assessments/${assessmentId}/analytics`);
   };
 
   const handleDeleteAssessment = async (assessmentId: string, name: string) => {
@@ -98,8 +135,8 @@ const AssessmentsManagement: React.FC = () => {
         try {
           await AdminService.deleteAssessment(assessmentId);
           Swal.fire("Deleted!", "Assessment has been deleted.", "success");
-          fetchAssessments(); // Refresh list
-          fetchDashboardData(); // Refresh layout badges
+          fetchAssessments();
+          fetchDashboardData();
         } catch (err: any) {
           Swal.fire("Error!", err.response?.data?.msg || "Failed to delete assessment.", "error");
         }
@@ -107,7 +144,36 @@ const AssessmentsManagement: React.FC = () => {
     });
   };
 
-  // --- Modal Form Handlers ---
+  const handleBulkPublish = async (assessmentIds: string[]) => {
+    try {
+      await AdminService.bulkAssessmentAction(assessmentIds, 'publish');
+      Swal.fire("Success!", "Assessments published successfully.", "success");
+      fetchAssessments();
+    } catch (err: any) {
+      Swal.fire("Error!", err.response?.data?.msg || "Failed to publish assessments.", "error");
+    }
+  };
+
+  const handleExportResults = async (assessmentId: string) => {
+    try {
+      const response = await AssessmentService.exportAssessmentResults(assessmentId);
+      
+      // Create blob and download
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `assessment_results_${assessmentId}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+    } catch (err: any) {
+      Swal.fire("Error!", err.response?.data?.msg || "Failed to export results.", "error");
+    }
+  };
+
   const handleModalChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setCurrentAssessment(prev => ({ ...prev!, [name]: value }));
@@ -150,7 +216,6 @@ const AssessmentsManagement: React.FC = () => {
       return;
     }
 
-    // Basic question validation (more robust validation should be on backend)
     for (const q of currentAssessment.questions) {
       if (!q.text || !q.options || q.options.length < 2) {
         setModalError("Each question must have text and at least two options.");
@@ -164,23 +229,21 @@ const AssessmentsManagement: React.FC = () => {
       }
     }
 
-
     try {
       const payload = {
         ...currentAssessment,
         number_of_questions: currentAssessment.questions.length,
-        // Ensure `id` is not sent on creation
       };
 
-      if (isEditing && currentAssessment.id) {
-        await AdminService.updateAssessment(currentAssessment.id, payload);
+      if (isEditing && currentAssessment._id) {
+        await AdminService.updateAssessment(currentAssessment._id, payload);
       } else {
         await AdminService.createAssessment(payload);
       }
       Swal.fire("Success!", "Assessment saved successfully.", "success");
       setShowModal(false);
-      fetchAssessments(); // Refresh list
-      fetchDashboardData(); // Refresh layout badges
+      fetchAssessments();
+      fetchDashboardData();
     } catch (err: any) {
       console.error("Error saving assessment:", err);
       setModalError(err.response?.data?.msg || "Failed to save assessment.");
@@ -188,7 +251,6 @@ const AssessmentsManagement: React.FC = () => {
       setModalLoading(false);
     }
   };
-
 
   if (loading) {
     return (
@@ -215,13 +277,51 @@ const AssessmentsManagement: React.FC = () => {
           <h2 className="text-3xl font-bold text-slate-800">Assessments Management</h2>
           <p className="text-slate-600 mt-1">Add, edit, and manage career aptitude and interest assessments</p>
         </div>
-        <button
-          onClick={handleAddAssessment}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <PlusCircle className="h-4 w-4" />
-          Add New Assessment
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowStats(!showStats)}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+          >
+            <BarChart3 className="h-4 w-4" />
+            {showStats ? 'Hide Stats' : 'Show Stats'}
+          </button>
+          <button
+            onClick={handleAddAssessment}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <PlusCircle className="h-4 w-4" />
+            Add New Assessment
+          </button>
+        </div>
       </div>
+
+      {/* Statistics Panel */}
+      {showStats && stats && (
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-slate-100">
+          <h3 className="text-xl font-semibold mb-4">Assessment Statistics</h3>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">{stats.total_assessments}</div>
+              <div className="text-sm text-blue-800">Total Assessments</div>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">{stats.published}</div>
+              <div className="text-sm text-green-800">Published</div>
+            </div>
+            <div className="bg-yellow-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-yellow-600">{stats.draft}</div>
+              <div className="text-sm text-yellow-800">Draft</div>
+            </div>
+            <div className="bg-red-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-red-600">{stats.archived}</div>
+              <div className="text-sm text-red-800">Archived</div>
+            </div>
+            <div className="bg-indigo-50 p-4 rounded-lg">
+              <div className="text-2xl font-bold text-indigo-600">{stats.total_questions}</div>
+              <div className="text-sm text-indigo-800">Total Questions</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl shadow-lg border border-slate-200">
         <div className="p-6">
@@ -229,26 +329,26 @@ const AssessmentsManagement: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-slate-200">
-                  <th className="text-left py-4 px-2 font-semibold text-slate-700">Name</th>
-                  <th className="text-left py-4 px-2 font-semibold text-slate-700">Type</th>
-                  <th className="text-left py-4 px-2 font-semibold text-slate-700">Questions</th>
-                  <th className="text-left py-4 px-2 font-semibold text-slate-700">Duration</th>
-                  <th className="text-left py-4 px-2 font-semibold text-slate-700">Status</th>
-                  <th className="text-left py-4 px-2 font-semibold text-slate-700">Actions</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-700">Name</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-700">Type</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-700">Questions</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-700">Duration</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-700">Status</th>
+                  <th className="text-left py-4 px-4 font-semibold text-slate-700">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {assessments.length > 0 ? (
                   assessments.map((assessment) => (
-                    <tr key={assessment.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-2">
+                    <tr key={assessment._id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="py-4 px-4">
                         <div className="font-semibold text-slate-800">{assessment.name}</div>
                         <p className="text-sm text-slate-600">{assessment.description}</p>
                       </td>
-                      <td className="py-4 px-2 text-slate-700 capitalize">{assessment.type}</td>
-                      <td className="py-4 px-2 text-slate-700">{assessment.number_of_questions}</td>
-                      <td className="py-4 px-2 text-slate-700">{assessment.duration_minutes} min</td>
-                      <td className="py-4 px-2">
+                      <td className="py-4 px-4 text-slate-700 capitalize">{assessment.type}</td>
+                      <td className="py-4 px-4 text-slate-700">{assessment.number_of_questions}</td>
+                      <td className="py-4 px-4 text-slate-700">{assessment.duration_minutes} min</td>
+                      <td className="py-4 px-4">
                         <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                           assessment.status === 'published' ? 'bg-green-100 text-green-700' :
                           assessment.status === 'draft' ? 'bg-yellow-100 text-yellow-700' :
@@ -257,16 +357,41 @@ const AssessmentsManagement: React.FC = () => {
                           {assessment.status}
                         </span>
                       </td>
-                      <td className="py-4 px-2">
+                      <td className="py-4 px-4">
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => handleViewAssessment(assessment._id)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="View Assessment"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleViewAnalytics(assessment._id)}
+                            className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            title="View Analytics"
+                          >
+                            <BarChart3 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleExportResults(assessment._id)}
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            title="Export Results"
+                          >
+                            <Download className="h-4 w-4" />
+                          </button>
+                          <button
                             onClick={() => handleEditAssessment(assessment)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                            className="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors"
+                            title="Edit Assessment"
+                          >
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => handleDeleteAssessment(assessment.id, assessment.name)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            onClick={() => handleDeleteAssessment(assessment._id, assessment.name)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Delete Assessment"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
