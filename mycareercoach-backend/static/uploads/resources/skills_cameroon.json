@@ -1,0 +1,28 @@
+{
+  "skills": [
+    {
+      "name": "Agriculture durable",
+      "description": "Techniques agricoles respectueuses de l'environnement adaptées au climat camerounais",
+      "category": "Agriculture",
+      "related_courses": ["Agriculture et Agro-industrie"]
+    },
+    {
+      "name": "Développement mobile Android",
+      "description": "Création d'applications Android pour le marché camerounais",
+      "category": "Technologie",
+      "related_courses": ["Informatique et Développement Logiciel"]
+    },
+    {
+      "name": "Procédures douanières CEMAC",
+      "description": "Connaissance des réglementations douanières de la Communauté Économique des États de l'Afrique Centrale",
+      "category": "Commerce",
+      "related_courses": ["Commerce International et Douanes"]
+    },
+    {
+      "name": "Gestion de projets agricoles",
+      "description": "Planification et gestion de projets dans le secteur agricole camerounais",
+      "category": "Management",
+      "related_courses": ["Agriculture et Agro-industrie"]
+    }
+  ]
+}

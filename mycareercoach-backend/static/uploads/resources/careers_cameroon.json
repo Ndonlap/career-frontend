@@ -1,0 +1,40 @@
+{
+  "careers": [
+    {
+      "title": "Ingénieur Agronome",
+      "description": "Spécialiste de l'agriculture et de l'élevage au Cameroun",
+      "industry": "Agriculture",
+      "market_demand": "Élevée",
+      "growth_rate": 15,
+      "average_salary": 1800000,
+      "job_openings_estimate": "High",
+      "required_skills": ["Agronomie", "Gestion de projet", "Connaissances sols tropicaux"],
+      "educational_paths": ["Master en Agronomie", "Ingénieur agricole"],
+      "industry_partners": ["IRAD", "MINADER", "SODECOTON"]
+    },
+    {
+      "title": "Développeur Logiciel",
+      "description": "Création d'applications et solutions digitales pour le marché camerounais",
+      "industry": "Technologie",
+      "market_demand": "Très élevée",
+      "growth_rate": 25,
+      "average_salary": 2500000,
+      "job_openings_estimate": "Very High",
+      "required_skills": ["Programmation", "Base de données", "Développement mobile"],
+      "educational_paths": ["Licence en informatique", "École d'ingénieur"],
+      "industry_partners": ["Orange Cameroun", "MTN Cameroon", "Startups locales"]
+    },
+    {
+      "title": "Expert en Commerce International",
+      "description": "Spécialiste des échanges commerciaux avec les pays de la CEMAC",
+      "industry": "Commerce",
+      "market_demand": "Moyenne",
+      "growth_rate": 12,
+      "average_salary": 2200000,
+      "job_openings_estimate": "Medium",
+      "required_skills": ["Douanes", "Logistique", "Négociation"],
+      "educational_paths": ["Master en commerce international", "École de commerce"],
+      "industry_partners": ["Douanes camerounaises", "Chambre de commerce", "Entreprises exportatrices"]
+    }
+  ]
+}

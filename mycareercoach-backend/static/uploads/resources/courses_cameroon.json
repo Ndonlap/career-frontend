@@ -1,0 +1,43 @@
+{
+  "courses": [
+    {
+      "title": "Agriculture et Agro-industrie",
+      "description": "Formation en techniques agricoles modernes et transformation des produits agricoles adaptées au contexte camerounais",
+      "category": "Agriculture",
+      "instructor": "Dr. Jean Mbarga",
+      "duration": "6 mois",
+      "prerequisites": ["Baccalauréat"],
+      "skills_gained": ["Techniques agricoles modernes", "Gestion d'exploitation", "Transformation agro-alimentaire"],
+      "related_careers": ["Agronome", "Agro-industriel", "Technicien agricole"],
+      "students_enrolled_count": 350,
+      "average_rating": 4.5,
+      "status": "active"
+    },
+    {
+      "title": "Informatique et Développement Logiciel",
+      "description": "Programmation et développement d'applications avec focus sur les besoins locaux",
+      "category": "Technologie",
+      "instructor": "Ing. Marie Ngono",
+      "duration": "9 mois",
+      "prerequisites": ["Baccalauréat scientifique"],
+      "skills_gained": ["Programmation Python", "Développement Web", "Base de données"],
+      "related_careers": ["Développeur fullstack", "Analyste programmeur", "Admin système"],
+      "students_enrolled_count": 890,
+      "average_rating": 4.7,
+      "status": "active"
+    },
+    {
+      "title": "Commerce International et Douanes",
+      "description": "Formation aux techniques de commerce international et procédures douanières camerounaises",
+      "category": "Commerce",
+      "instructor": "Dr. Paul Ndzie",
+      "duration": "4 mois",
+      "prerequisites": ["Licence en commerce"],
+      "skills_gained": ["Procédures douanières", "Négociation internationale", "Logistique"],
+      "related_careers": ["Agent des douanes", "Commercial international", "Logisticien"],
+      "students_enrolled_count": 420,
+      "average_rating": 4.3,
+      "status": "active"
+    }
+  ]
+}

@@ -11,38 +11,66 @@ class AcademicRecord:
         self.term = term
         self.year = year
         self.average_score = average_score
-        self.subjects = subjects # List of dicts: [{"name": "Math", "score": 85, "grade": "A"}]
-        self.uploaded_report_card = kwargs.get('uploaded_report_card', None) # Dict: {"filename": "report.pdf", "path": "/path"}
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
-        self._id = None
+        self.subjects = subjects
+        self.uploaded_report_card = kwargs.get('uploaded_report_card', None)
+        self.validation_status = kwargs.get('validation_status', 'pending')  # pending, validated, rejected
+        self.validation_notes = kwargs.get('validation_notes', '')
+        self.validated_by = kwargs.get('validated_by', None)
+        self.validated_at = kwargs.get('validated_at', None)
+        self.created_at = kwargs.get('created_at', datetime.utcnow())
+        self.updated_at = kwargs.get('updated_at', datetime.utcnow())
+        self._id = kwargs.get('_id', None)
 
     def save(self):
         doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
-        doc['student_id'] = ObjectId(doc['student_id']) # Ensure ObjectId reference
-        result = mongo.db[self.collection_name].insert_one(doc)
-        self._id = result.inserted_id
-        return self._id
+        doc['student_id'] = ObjectId(doc['student_id'])
+        if self._id:
+            result = mongo.db[self.collection_name].update_one(
+                {"_id": ObjectId(self._id)},
+                {"$set": doc}
+            )
+            return result.modified_count > 0
+        else:
+            result = mongo.db[self.collection_name].insert_one(doc)
+            self._id = result.inserted_id
+            return self._id
 
     @classmethod
     def find_by_student_id(cls, student_id):
         records_data = mongo.db[cls.collection_name].find({"student_id": ObjectId(student_id)})
         records = []
         for r in records_data:
-            # Create a copy of the document without student_id to avoid duplication
             record_data = r.copy()
-            record_data.pop('student_id', None)  # Remove student_id to avoid conflict
-            records.append(cls(student_id=str(r['student_id']), **record_data))
+            student_id_str = str(record_data.pop('student_id'))
+            if 'validated_by' in record_data and record_data['validated_by']:
+                record_data['validated_by'] = str(record_data['validated_by'])
+            records.append(cls(student_id=student_id_str, **record_data))
         return records
     
+    @classmethod
+    def find_by_id(cls, record_id):
+        record_data = mongo.db[cls.collection_name].find_one({"_id": ObjectId(record_id)})
+        if record_data:
+            record_data = record_data.copy()
+            student_id_str = str(record_data.pop('student_id'))
+            if 'validated_by' in record_data and record_data['validated_by']:
+                record_data['validated_by'] = str(record_data['validated_by'])
+            return cls(student_id=student_id_str, **record_data)
+        return None
+    
     def to_dict(self):
-        doc = {k: v for k, v in self.__dict__.items() if k != 'password_hash'}
-        doc['id'] = str(doc.pop('_id'))
-        doc['student_id'] = str(doc['student_id'])
-        doc['created_at'] = doc['created_at'].isoformat()
-        doc['updated_at'] = doc['updated_at'].isoformat()
+        doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
+        if self._id:
+            doc['id'] = str(self._id)
+        doc['student_id'] = str(self.student_id)
+        if self.validated_by:
+            doc['validated_by'] = str(self.validated_by)
+        doc['created_at'] = self.created_at.isoformat() if isinstance(self.created_at, datetime) else self.created_at
+        doc['updated_at'] = self.updated_at.isoformat() if isinstance(self.updated_at, datetime) else self.updated_at
+        if self.validated_at:
+            doc['validated_at'] = self.validated_at.isoformat() if isinstance(self.validated_at, datetime) else self.validated_at
         return doc
-
+    
 
 class Course:
     collection_name = 'courses'

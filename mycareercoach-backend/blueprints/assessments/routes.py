@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson.objectid import ObjectId
 from datetime import datetime
 import random
+import json
 
 # Import models
 from auth.models import User
@@ -13,17 +14,20 @@ from blueprints.shared.models import Career # Needed for insights
 
 # --- Helper Function for Authorization ---
 def check_admin_role():
-    identity = get_jwt_identity()
-    if identity.get('role') != 'admin':
+    current_user_identity = get_jwt_identity()
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    if current_user_identity.get('role') != 'admin':
         return jsonify({"msg": "Access denied: Admins only"}), 403
-    return None # No error
+    return None
 
 def check_student_role():
-    identity = get_jwt_identity()
-    if identity.get('role') != 'student':
+    current_user_identity = get_jwt_identity()
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    if current_user_identity.get('role') != 'student':
         return jsonify({"msg": "Access denied: Students only"}), 403
-    return None # No error
-
+    return None
 
 # --- Admin Routes for Assessment Management ---
 
@@ -39,7 +43,7 @@ def create_assessment():
     assessment_type = data.get('type') # e.g., "aptitude", "interest", "personality"
     duration_minutes = data.get('duration_minutes', 0)
     questions_data = data.get('questions', [])
-    status = data.get('status', 'draft') # Default to draft
+    status = data.get('status', 'published') # Default to draft
 
     if not all([name, description, assessment_type, questions_data]):
         return jsonify({"msg": "Missing required fields: name, description, type, questions"}), 400
@@ -56,7 +60,10 @@ def create_assessment():
             q_data['options'] = [opt.strip() for opt in q_data['options'].split(',')]
 
     current_user_identity = get_jwt_identity()
-    created_by_id = current_user_identity['id']
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    
+    created_by_id = current_user_identity.get('id')
 
     try:
         new_assessment = Assessment(
@@ -81,14 +88,38 @@ def get_all_assessments_admin():
     error = check_admin_role()
     if error: return error
 
-    assessments_cursor = mongo.db.assessments.find({})
-    assessments_list = []
-    for ass in assessments_cursor:
-        # Include solutions for admin view
-        assessment_obj = Assessment(created_by=str(ass['created_by']), **ass) # Reconstruct for to_dict method
-        assessments_list.append(assessment_obj.to_dict(include_solutions=True))
-    
-    return jsonify(assessments_list), 200
+    try:
+        assessments_cursor = mongo.db.assessments.find({})
+        assessments_list = []
+        for ass in assessments_cursor:
+            kwargs = ass.copy()
+            # Remove fields that will be passed as explicit parameters
+            fields_to_remove = ["name","description","type","duration_minutes","number_of_questions","created_by","questions","status"]
+            for field in fields_to_remove:
+                kwargs.pop(field, None)
+            
+            assessment_obj = Assessment(
+                name=ass['name'],
+                description=ass['description'],
+                type=ass['type'],
+                duration_minutes=ass['duration_minutes'],
+                number_of_questions=ass['number_of_questions'],
+                created_by=str(ass['created_by']),
+                questions=ass['questions'],
+                status=ass.get('status', 'draft'),
+                **kwargs
+            )
+            
+            assessment_obj._id = str(ass['_id'])
+            assessment_obj.created_at = ass.get('created_at', datetime.utcnow())
+            assessment_obj.updated_at = ass.get('updated_at', datetime.utcnow())
+            
+            assessments_list.append(assessment_obj.to_dict())
+        
+        return jsonify(assessments_list), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching assessments: {str(e)}")
+        return jsonify({"msg": "Internal server error"}), 500
 
 @assessments_bp.route('/admin/assessments/<assessment_id>', methods=['GET'])
 @jwt_required()
@@ -96,12 +127,35 @@ def get_assessment_details_admin(assessment_id):
     error = check_admin_role()
     if error: return error
 
-    assessment_data = mongo.db.assessments.find_one({"_id": ObjectId(assessment_id)})
-    if not assessment_data:
-        return jsonify({"msg": "Assessment not found"}), 404
-    
-    assessment_obj = Assessment(created_by=str(assessment_data['created_by']), **assessment_data)
-    return jsonify(assessment_obj.to_dict(include_solutions=True)), 200
+    try:
+        ObjectId(assessment_id)
+    except:
+        return jsonify({"msg": "Invalid assessment ID format"}), 400
+
+    try:
+        assessment_data = mongo.db.assessments.find_one({"_id": ObjectId(assessment_id)})
+        if not assessment_data:
+            return jsonify({"msg": "Assessment not found"}), 404
+        
+        assessment_obj = Assessment(
+            name=assessment_data['name'],
+            description=assessment_data['description'],
+            type=assessment_data['type'],
+            duration_minutes=assessment_data['duration_minutes'],
+            number_of_questions=assessment_data['number_of_questions'],
+            created_by=str(assessment_data['created_by']),
+            questions=assessment_data['questions'],
+            status=assessment_data.get('status', 'draft')
+        )
+        assessment_obj._id = assessment_data['_id']
+        assessment_obj.created_at = assessment_data.get('created_at', datetime.utcnow())
+        assessment_obj.updated_at = assessment_data.get('updated_at', datetime.utcnow())
+        
+        return jsonify(assessment_obj.to_dict(include_solutions=True)), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching assessment: {str(e)}")
+        return jsonify({"msg": "Internal server error"}), 500
+
 
 @assessments_bp.route('/admin/assessments/<assessment_id>', methods=['PUT'])
 @jwt_required()
@@ -228,6 +282,9 @@ def submit_assessment(assessment_id):
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    
     student_id = current_user_identity['id']
 
     data = request.get_json()
@@ -347,6 +404,9 @@ def get_student_assessment_results():
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    
     student_id = current_user_identity['id']
 
     results_cursor = mongo.db.assessment_results.find({"student_id": ObjectId(student_id)}).sort("submission_date", -1)
@@ -369,6 +429,9 @@ def get_single_student_assessment_result(result_id):
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    if isinstance(current_user_identity, str):
+        current_user_identity = json.loads(current_user_identity)
+    
     student_id = current_user_identity['id']
 
     result_data = mongo.db.assessment_results.find_one(

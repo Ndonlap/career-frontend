@@ -4,7 +4,7 @@ import Signup from "./views/components/authViews/Signup";
 import Homepage from "./views/components/Homepage/Homepage";
 import Login from "./views/components/authViews/Login";
 import StudLanding from "./views/components/StudView/StudLanding";
-import AdminDashboard from "./views/components/Dashboard/AdminDashboard";
+import AdminDashboard from "./views/components/Dashboard/toDetele/AdminDashboard";
 import BookCounselor from "./views/components/StudView/BookCounselor";
 
 // Import the new layout and separated components
@@ -24,6 +24,17 @@ import Resources from "./views/components/Homepage/Resources";
 import FAQPage from "./utils/components/other components/FAQPage";
 import Footer from "./utils/components/other components/Footer";
 
+import AdminDashboardLayout from "./views/components/Dashboard/AdminDashboardLayout";
+import AdminDashboardHomePage from "./views/components/Dashboard/AdminDashboardHomePage";
+import AccountManagement from "./views/components/Dashboard/AccountManagement";
+import AcademicRecordManagement from "./views/components/Dashboard/AcademicRecordManagement";
+import AssessmentsManagement from "./views/components/Dashboard/AssessmentsManagement";
+import SkillManagement from "./views/components/Dashboard/toDetele/SkillManagement";
+import CourseManagement from "./views/components/Dashboard/toDetele/CourseManagement";
+import AdminConversationPage from "./views/components/Dashboard/AdminConversationPage";
+import AdminSetting from "./views/components/Dashboard/AdminSetting";
+
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -38,6 +49,7 @@ import CounselorRecommendationsPage from "./views/components/CounselorView/Couns
 import CounselorAppointmentsPage from "./views/components/CounselorView/CounselorAppointmentsPage";
 import CounselorConversationPage from "./views/components/CounselorView/CounselorConversationPage";
 import CounselorSetting from "./views/components/CounselorView/CounselorSetting";
+import ContentManagement from "./views/components/Dashboard/ContentManagement";
 
 
 function App() {
@@ -70,7 +82,7 @@ function App() {
 
         {/* Nested Routes for Counselor Dashboard */}
         <Route path="/CounselorDashboard" element={<CounselorDashboardLayout />}>
-          <Route index element={<CounselorDashboardHomePage />} />
+          {/* <Route index element={<CounselorDashboardHomePage />} /> */}
           <Route path="Student-Management" element={<StudentManagement />} />
           <Route path="recommendations" element={<CounselorRecommendationsPage />} />
           <Route path="appointment" element={<CounselorAppointmentsPage />} />
@@ -80,7 +92,18 @@ function App() {
           {/* <Route path="Student-Management/:studentId" element={<CounselorStudentDetailPage />} /> */}
         </Route>
 
-        <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        {/* Nested Routes for Admin Dashboard (NEW) */}
+        <Route path="/AdminDashboard" element={<AdminDashboardLayout />}>
+          <Route index element={<AdminDashboardHomePage />} />
+          <Route path="account" element={<AccountManagement />} />
+          <Route path="academic-record" element={<AcademicRecordManagement />} />
+          <Route path="assessments" element={<AssessmentsManagement />} />
+          <Route path="content" element={<ContentManagement />} />
+          {/* <Route path="course" element={<CourseManagement />} /> */}
+          <Route path="conversation" element={<AdminConversationPage />} />
+          <Route path="settings" element={<AdminSetting />} />
+        </Route>
+
         <Route path="/Services" element={<Services />} />
         <Route path="/Resources" element={<Resources />} />
         <Route path="/FAQPage" element={<FAQPage />} />

@@ -16,7 +16,8 @@ class AssessmentQuestion:
         self.difficulty = difficulty # easy, medium, hard
         self.points = points
         self.explanation = explanation
-        self._id = kwargs.get('_id', ObjectId()) # Allow pre-defined ID for embedded
+        print(" kwargs in init", kwargs)
+        self._id = kwargs.get('_id', None)
 
     def to_dict(self):
         return {
@@ -41,7 +42,7 @@ class Assessment:
         self.number_of_questions = number_of_questions
         self.created_by = created_by # ObjectId of admin user
         self.questions = [q.to_dict() if isinstance(q, AssessmentQuestion) else q for q in questions] # Store as dicts
-        self.status = kwargs.get('status', 'draft') # draft, published, archived
+        self.status = kwargs.get('status', 'published') # draft, published, archived
         self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
         self._id = None
@@ -77,18 +78,20 @@ class Assessment:
         return []
 
     def to_dict(self, include_solutions=False):
-        doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
-        doc['id'] = str(doc.pop('_id')) if '_id' in doc else None
+        doc = {k: v for k, v in self.__dict__.items()}
+        print("doc")
+        # doc['id'] = str(doc('_id'))
         doc['created_by'] = str(doc['created_by'])
         doc['created_at'] = doc['created_at'].isoformat()
         doc['updated_at'] = doc['updated_at'].isoformat()
+        print(doc)
         
         # Process questions for output
         processed_questions = []
         for q in doc['questions']:
             q_copy = q.copy()
-            q_copy['id'] = str(q_copy['_id'])
-            q_copy.pop('_id')
+            # q_copy['id'] = str(q_copy['_id'])
+            # q_copy.pop('_id')
             if not include_solutions:
                 q_copy.pop('correct_answer', None)
                 q_copy.pop('explanation', None)

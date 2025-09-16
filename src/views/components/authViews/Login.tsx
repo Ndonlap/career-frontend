@@ -72,7 +72,7 @@ const Login: React.FC = () => {
 
       // Redirect based on user role
       if (role === 'student') {
-        navigate('/studLanding');
+        navigate('/StudentDashboard');
       } else if (role === 'counselor') {
         navigate('/CounselorDashboard');
       } else if (role === 'admin') {
