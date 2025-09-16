@@ -230,6 +230,8 @@ def get_counselor_profile():
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     counselor = User.find_by_id(counselor_id)
@@ -245,7 +247,10 @@ def get_counselor_dashboard_summary():
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
+    # counselor_id = current_user_identity['id']
     
     counselor_profile = User.find_by_id(counselor_id)
     if not counselor_profile:
@@ -302,6 +307,8 @@ def get_assigned_students():
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     # Filters (e.g., by risk_level, grade) can be added from request.args
@@ -334,6 +341,8 @@ def get_single_student_details(student_id):
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     student = User.find_by_id(student_id)
@@ -362,6 +371,8 @@ def get_counselor_appointments():
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     # Query parameters for filtering
@@ -385,8 +396,45 @@ def get_counselor_appointments():
     
     appointments_list = []
     for app_data in appointments_cursor:
-        app = Appointment(student_id=str(app_data['student_id']), counselor_id=str(app_data['counselor_id']), date=app_data['date'], time=app_data['time'], duration_minutes=app_data['duration_minutes'], type=app_data['type'], notes_by_student=app_data.get('notes_by_student', ''), **app_data)
-        appointments_list.append(app.to_dict())
+        student_id = app_data['student_id']
+        student = mongo.db.users.find_one({'_id': student_id})
+        
+        student_info = {}
+        if student:
+            student_info = {
+                'student_id': str(student['_id']),
+                'student_name': f"{student.get('first_name', '')} {student.get('last_name', '')}".strip(),
+                'student_email': student.get('email', ''),
+                'student_phone': student.get('phone', ''),
+                'student_year': student.get('year', ''),
+                'student_major': student.get('major', '')
+            }
+        
+        # Create appointment object
+        kwargs = app_data.copy()
+        # Remove fields that will be passed as explicit parameters
+        fields_to_remove = ['_id','student_id', 'counselor_id', 'date', 'time', 'duration_minutes', 'type', 'notes_by_student', '_id']
+        for field in fields_to_remove:
+            kwargs.pop(field, None)
+        print(app_data.get('_id'))
+        print(app_data['_id'])
+        app = Appointment(
+            student_id=str(app_data['student_id']),
+            counselor_id=str(app_data['counselor_id']),
+            date=app_data['date'],
+            time=app_data['time'], 
+            duration_minutes=app_data['duration_minutes'], 
+            type=app_data['type'], 
+            notes_by_student=app_data.get('notes_by_student', ''),
+            **kwargs
+        )
+        
+        # Convert to dict and add student information
+        appointment_dict = app.to_dict()
+        appointment_dict['student'] = student_info
+        appointment_dict['id'] = str(app_data['_id'])
+        
+        appointments_list.append(appointment_dict)
         
     return jsonify(appointments_list), 200
 
@@ -397,6 +445,8 @@ def update_appointment_status(appointment_id):
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     data = request.get_json()
@@ -422,6 +472,8 @@ def get_counselor_recommendations():
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     # Find students assigned to this counselor
@@ -449,6 +501,8 @@ def generate_recommendation_for_student(student_id):
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     student = User.find_by_id(student_id)
@@ -490,6 +544,8 @@ def get_counselor_quick_stats():
     if error: return error
 
     current_user_identity = get_jwt_identity()
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
 
     today = date.today()

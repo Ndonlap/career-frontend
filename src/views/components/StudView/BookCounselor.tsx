@@ -5,15 +5,15 @@ import { useNavigate } from "react-router-dom";
 // Import Services
 import StudentService from "../../../services/student";
 import AuthService from "../../../services/auth";
-import CounselorService from "../../../services/counselor"; // Using the updated service
+import CounselorService from "../../../services/counselor";
 
 interface FormData {
   counselor_id: string;
-  fullName: string;
-  email: string;
   date: string;
   time: string;
   notes: string;
+  duration_minutes?: number;
+  type?: string;
 }
 
 interface Counselor {
@@ -28,11 +28,11 @@ const BookCounselor: React.FC = () => {
 
   const [form, setForm] = useState<FormData>({
     counselor_id: "",
-    fullName: "",
-    email: "",
     date: "",
     time: "",
     notes: "",
+    duration_minutes: 45, // Default value matching backend
+    type: "General Counseling", // Default value matching backend
   });
 
   const [counselors, setCounselors] = useState<Counselor[]>([]);
@@ -41,56 +41,18 @@ const BookCounselor: React.FC = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
 
-  // --- Effect 1: Fetch Current User Profile and Pre-fill Form ---
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await AuthService.getProfile();
-        const userProfile = response.data;
-        setForm((prev) => ({
-          ...prev,
-          fullName: `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim(),
-          email: userProfile.email || '',
-        }));
-      } catch (err: any) {
-        console.error("Error fetching user profile for booking:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Profile Load Failed",
-          text: err.response?.data?.msg || "Could not load your profile details automatically.",
-        });
-        // Redirect to login if token is expired or invalid
-        if (err.response?.status === 401 || err.response?.status === 403) {
-            AuthService.clearTokens();
-            navigate('/login');
-        }
-      }
-    };
-
-    if (AuthService.getAccessToken()) {
-      fetchUserProfile();
-    } else {
-      Swal.fire({
-        icon: "info",
-        title: "Login Required",
-        text: "Please log in to book a counseling session.",
-      }).then(() => navigate('/login'));
-    }
-  }, [navigate]);
-
-  // --- Effect 2: Fetch Available Counselors (USING NEW SERVICE) ---
+  // --- Effect: Fetch Available Counselors ---
   useEffect(() => {
     const fetchCounselors = async () => {
       setLoadingCounselors(true);
       setCounselorsError(null);
       try {
-        // Use the new dedicated endpoint
         const response = await CounselorService.getAvailableCounselors();
         const availableCounselors = response.data;
         
         setCounselors(availableCounselors);
         if (availableCounselors.length > 0) {
-            setForm(prev => ({ ...prev, counselor_id: availableCounselors[0].id })); // Auto-select first counselor
+            setForm(prev => ({ ...prev, counselor_id: availableCounselors[0].id }));
         }
       } catch (err: any) {
         console.error("Error fetching counselors:", err);
@@ -100,7 +62,6 @@ const BookCounselor: React.FC = () => {
             title: "Counselors Load Failed",
             text: "Could not load available counselors.",
           });
-          // Also redirect if access token is invalid for fetching counselors
         if (err.response?.status === 401 || err.response?.status === 403) {
             AuthService.clearTokens();
             navigate('/login');
@@ -112,12 +73,21 @@ const BookCounselor: React.FC = () => {
 
     if (AuthService.getAccessToken()) {
         fetchCounselors();
+    } else {
+      Swal.fire({
+        icon: "info",
+        title: "Login Required",
+        text: "Please log in to book a counseling session.",
+      }).then(() => navigate('/login'));
     }
-  }, [navigate]); // Run once on mount
+  }, [navigate]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ 
+      ...prev, 
+      [name]: name === 'duration_minutes' ? parseInt(value) : value 
+    }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -125,7 +95,7 @@ const BookCounselor: React.FC = () => {
     setBookingError(null);
     setBookingLoading(true);
 
-    const { counselor_id, date, time, notes } = form;
+    const { counselor_id, date, time } = form;
 
     if (!counselor_id || !date || !time) {
       Swal.fire({
@@ -138,12 +108,17 @@ const BookCounselor: React.FC = () => {
     }
 
     try {
-      const response = await StudentService.bookCounselingSession({
+      // Send only the fields that the backend expects
+      const bookingData = {
         counselor_id: counselor_id,
         date: date,
         time: time,
-        notes: notes,
-      });
+        notes: form.notes,
+        duration_minutes: form.duration_minutes,
+        type: form.type
+      };
+
+      const response = await StudentService.bookCounselingSession(bookingData);
 
       Swal.fire({
         icon: "success",
@@ -152,7 +127,7 @@ const BookCounselor: React.FC = () => {
         timer: 2000,
         showConfirmButton: false,
       }).then(() => {
-        navigate('/StudentDashboard'); // Redirect to dashboard or a booking confirmation page
+        navigate('/StudentDashboard');
       });
 
     } catch (error: any) {
@@ -169,6 +144,18 @@ const BookCounselor: React.FC = () => {
     }
   };
 
+  // Duration options
+  const durationOptions = [30, 45, 60, 90];
+  // Appointment type options
+  const typeOptions = [
+    "General Counseling",
+    "Academic Guidance",
+    "Career Counseling",
+    "Personal Issues",
+    "Crisis Intervention",
+    "Other"
+  ];
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-yellow-300 p-8">
@@ -182,32 +169,6 @@ const BookCounselor: React.FC = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          {/* Full Name (pre-filled, read-only) */}
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input
-              id="fullName"
-              name="fullName"
-              type="text"
-              value={form.fullName}
-              readOnly
-              className="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-sm shadow-sm focus:outline-none"
-            />
-          </div>
-
-          {/* Email (pre-filled, read-only) */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={form.email}
-              readOnly
-              className="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-sm shadow-sm focus:outline-none"
-            />
-          </div>
-
           {/* Counselor Selection */}
           <div>
             <label htmlFor="counselor_id" className="block text-sm font-medium text-gray-700">Select Counselor</label>
@@ -245,7 +206,7 @@ const BookCounselor: React.FC = () => {
               required
               value={form.date}
               onChange={handleChange}
-              min={new Date().toISOString().split('T')[0]} // Prevent selecting past dates
+              min={new Date().toISOString().split('T')[0]}
               className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
           </div>
@@ -262,6 +223,42 @@ const BookCounselor: React.FC = () => {
               onChange={handleChange}
               className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
             />
+          </div>
+
+          {/* Duration Selection */}
+          <div>
+            <label htmlFor="duration_minutes" className="block text-sm font-medium text-gray-700">Session Duration (minutes)</label>
+            <select
+              id="duration_minutes"
+              name="duration_minutes"
+              value={form.duration_minutes}
+              onChange={handleChange}
+              className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            >
+              {durationOptions.map((duration) => (
+                <option key={duration} value={duration}>
+                  {duration} minutes
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Appointment Type */}
+          <div>
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700">Appointment Type</label>
+            <select
+              id="type"
+              name="type"
+              value={form.type}
+              onChange={handleChange}
+              className="w-full rounded-md border border-gray-300 px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            >
+              {typeOptions.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Notes */}

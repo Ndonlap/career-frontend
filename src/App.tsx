@@ -31,6 +31,13 @@ import {
   RouterProvider,
   Outlet
 } from 'react-router-dom'
+import CounselorDashboardLayout from "./views/components/CounselorView/CounselorDashboardLayout";
+import CounselorDashboardHomePage from "./views/components/CounselorView/CounselorDashboardHomePage";
+import StudentManagement from "./views/components/CounselorView/StudentManagement";
+import CounselorRecommendationsPage from "./views/components/CounselorView/CounselorRecommendationsPage";
+import CounselorAppointmentsPage from "./views/components/CounselorView/CounselorAppointmentsPage";
+import CounselorConversationPage from "./views/components/CounselorView/CounselorConversationPage";
+import CounselorSetting from "./views/components/CounselorView/CounselorSetting";
 
 
 function App() {
@@ -47,8 +54,8 @@ function App() {
         {/* Nested Routes for Student Dashboard */}
         {/* StudentDashboardLayout will provide the common sidebar and header */}
         <Route path="/StudentDashboard" element={<StudentDashboardLayout />}>
-          {/* <Route index element={<StudentDashboardHomePage />} /> */}
-          <Route path="upload-records" element={<UploadReportCard />} /> 
+          <Route index element={<StudLanding />} />
+          <Route path="upload-records" element={<UploadReportCard />} />
           <Route path="assessments" element={<Outlet />} > {/* Nested route for assessments */}
             <Route index element={<AssessmentPage />} /> {/* Lists available assessments */}
             <Route path=":assessmentId/start" element={<AptitudeTestPage />} /> {/* Route for taking an assessment */}
@@ -60,9 +67,20 @@ function App() {
           <Route path="settings" element={<StudentSetting />} />
           <Route path="Bookcounselor" element={<BookCounselor />} />
         </Route>
-        
+
+        {/* Nested Routes for Counselor Dashboard */}
+        <Route path="/CounselorDashboard" element={<CounselorDashboardLayout />}>
+          <Route index element={<CounselorDashboardHomePage />} />
+          <Route path="Student-Management" element={<StudentManagement />} />
+          <Route path="recommendations" element={<CounselorRecommendationsPage />} />
+          <Route path="appointment" element={<CounselorAppointmentsPage />} />
+          <Route path="conversation" element={<CounselorConversationPage />} />
+          <Route path="settings" element={<CounselorSetting />} />
+          {/* If you have specific routes for viewing student details or reports from a counselor's perspective: */}
+          {/* <Route path="Student-Management/:studentId" element={<CounselorStudentDetailPage />} /> */}
+        </Route>
+
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route path="/CounselorDashboard" element={<CounselorDashboard />} />
         <Route path="/Services" element={<Services />} />
         <Route path="/Resources" element={<Resources />} />
         <Route path="/FAQPage" element={<FAQPage />} />

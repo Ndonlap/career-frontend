@@ -148,16 +148,16 @@ const StudLanding: React.FC = () => {
         <div className="w-full flex items-center justify-between mx-auto max-w-7xl px-4 py-3">
           <Logo />
           <nav className=" md:flex items-center gap-8">
-            <a className="hover:underline" href="/StudentDashboard">Dashboard</a>
+            {/* <a className="hover:underline" href="/StudentDashboard">Dashboard</a> */}
             <a className="hover:underline" href="#features">Explore</a> {/* Changed from <Explore /> to simple text, assuming Explore is not a component here */}
-            <a className="hover:underline" href="/BookCounselor">Book a Counselor</a>
+            <a className="hover:underline" href="/StudentDashboard/BookCounselor">Book a Counselor</a>
             <Dropdown />
           </nav>
         </div>
       </header>
 
       {/* STAT CARDS */}
-      <section className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <StatCard 
             icon={<FileText size={22} />} 
             label="Uploaded Report Cards" 
@@ -179,13 +179,13 @@ const StudLanding: React.FC = () => {
             subtext="Scheduled" 
             color="bg-green-500" 
         />
-        <StatCard 
+        {/* <StatCard 
             icon={<BookOpen size={22} />} 
             label="Courses Explored" 
             value={statCardsData.courses_explored || 0} 
             subtext="Via Dashboard" 
             color="bg-red-600" 
-        />
+        /> */}
       </section>
 
       {/* BAR + PIE CHARTS SIDE BY SIDE */}

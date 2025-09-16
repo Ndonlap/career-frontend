@@ -1,6 +1,7 @@
 from extensions import mongo
 from bson.objectid import ObjectId
 from datetime import datetime
+from datetime import date 
 
 class AcademicRecord:
     collection_name = 'academic_records'
@@ -158,22 +159,21 @@ class Skill:
         doc['updated_at'] = doc['updated_at'].isoformat()
         return doc
 
-
 class Appointment:
     collection_name = 'appointments'
 
     def __init__(self, student_id, counselor_id, date, time, duration_minutes, type, notes_by_student, **kwargs):
         self.student_id = student_id
         self.counselor_id = counselor_id
-        self.date = date # datetime.date object
-        self.time = time # String, e.g., "14:00"
+        self.date = date  # This can be date object or string
+        self.time = time
         self.duration_minutes = duration_minutes
         self.type = type
         self.notes_by_student = notes_by_student
         self.notes_by_counselor = kwargs.get('notes_by_counselor', '')
-        self.status = kwargs.get('status', 'pending') # pending, confirmed, completed, cancelled
-        self.priority = kwargs.get('priority', 'medium') # low, medium, high
-        self.session_feedback = kwargs.get('session_feedback', None) # Dict: {"rating": 5, "comments": "Good session"}
+        self.status = kwargs.get('status', 'pending')
+        self.priority = kwargs.get('priority', 'medium')
+        self.session_feedback = kwargs.get('session_feedback', None)
         self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
         self._id = None
@@ -182,6 +182,13 @@ class Appointment:
         doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
         doc['student_id'] = ObjectId(doc['student_id'])
         doc['counselor_id'] = ObjectId(doc['counselor_id'])
+        
+        # Convert date to ISO string for MongoDB storage
+        if isinstance(doc.get('date'), date):
+            doc['date'] = doc['date'].isoformat()
+        elif isinstance(doc.get('date'), datetime):
+            doc['date'] = doc['date'].date().isoformat()
+        
         result = mongo.db[self.collection_name].insert_one(doc)
         self._id = result.inserted_id
         return self._id
@@ -191,12 +198,21 @@ class Appointment:
         doc['id'] = str(doc.pop('_id')) if '_id' in doc else None
         doc['student_id'] = str(doc['student_id'])
         doc['counselor_id'] = str(doc['counselor_id'])
-        doc['date'] = doc['date'].isoformat() if isinstance(doc['date'], datetime) else doc['date']
-        doc['created_at'] = doc['created_at'].isoformat()
-        doc['updated_at'] = doc['updated_at'].isoformat()
+        
+        # Convert all date/datetime objects to ISO strings for JSON serialization
+        if isinstance(doc.get('date'), date):
+            doc['date'] = doc['date'].isoformat()
+        elif isinstance(doc.get('date'), datetime):
+            doc['date'] = doc['date'].date().isoformat()
+        
+        if isinstance(doc.get('created_at'), datetime):
+            doc['created_at'] = doc['created_at'].isoformat()
+        
+        if isinstance(doc.get('updated_at'), datetime):
+            doc['updated_at'] = doc['updated_at'].isoformat()
+        
         return doc
-
-
+    
 class Recommendation:
     collection_name = 'recommendations'
 

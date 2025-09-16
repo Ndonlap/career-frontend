@@ -389,56 +389,110 @@ def upload_report_card():
     return jsonify({"msg": "File upload failed"}), 500
 
 
+from bson import ObjectId
+from datetime import datetime, date, time
+from flask import jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+import json
+
 @student_bp.route('/book_counseling_session', methods=['POST'])
 @jwt_required()
 def book_counseling_session():
-    current_user_identity_str = get_jwt_identity()
-    current_user_identity = json.loads(current_user_identity_str)
-    student_id = current_user_identity['id']
-    user_role = current_user_identity['role']
-
-    if user_role != 'student':
-        return jsonify({"msg": "Access denied: Not a student"}), 403
-
-    data = request.get_json()
-    counselor_id = data.get('counselor_id') # Frontend should select a counselor
-    booking_date_str = data.get('date')
-    booking_time = data.get('time')
-    notes = data.get('notes')
-    
-    if not counselor_id or not booking_date_str or not booking_time:
-        return jsonify({"msg": "Missing counselor_id, date, or time"}), 400
-
     try:
-        booking_date = datetime.strptime(booking_date_str, '%Y-%m-%d').date()
-    except ValueError:
-        return jsonify({"msg": "Invalid date format. Use YYYY-MM-DD"}), 400
-    
-    # Optional: Verify counselor_id exists and is a counselor
-    counselor = User.find_by_id(counselor_id)
-    if not counselor or counselor.role != 'counselor':
-        return jsonify({"msg": "Invalid counselor ID"}), 400
+        # Get current user identity
+        current_user_identity = get_jwt_identity()
+        if isinstance(current_user_identity, str):
+            current_user_identity = json.loads(current_user_identity)
+        
+        student_id = current_user_identity.get('id')
+        user_role = current_user_identity.get('role')
 
-    # Optional: Check counselor availability (more complex logic here)
-    # For now, just assume available.
+        # Validate user role
+        if user_role != 'student':
+            return jsonify({"msg": "Access denied: Not a student"}), 403
 
-    try:
+        # Validate request data
+        data = request.get_json()
+        if not data:
+            return jsonify({"msg": "No JSON data provided"}), 400
+
+        counselor_id = data.get('counselor_id')
+        booking_date_str = data.get('date')
+        booking_time = data.get('time')
+        notes = data.get('notes', '')
+        duration_minutes = data.get('duration_minutes', 45)
+        appointment_type = data.get('type', 'General Counseling')
+
+        # Validate required fields
+        if not all([counselor_id, booking_date_str, booking_time]):
+            return jsonify({"msg": "Missing required fields: counselor_id, date, or time"}), 400
+
+        # Validate ObjectId format
+        try:
+            ObjectId(counselor_id)
+        except:
+            return jsonify({"msg": "Invalid counselor ID format"}), 400
+
+        # Validate and parse date - convert to datetime for MongoDB
+        try:
+            booking_date = datetime.strptime(booking_date_str, '%Y-%m-%d')
+        except ValueError:
+            return jsonify({"msg": "Invalid date format. Use YYYY-MM-DD"}), 400
+
+        # Validate date is not in the past
+        if booking_date.date() < datetime.utcnow().date():
+            return jsonify({"msg": "Cannot book appointments in the past"}), 400
+
+        # Validate time format
+        try:
+            datetime.strptime(booking_time, '%H:%M')
+        except ValueError:
+            return jsonify({"msg": "Invalid time format. Use HH:MM"}), 400
+
+        # Validate counselor exists and is actually a counselor
+        counselor = User.find_by_id(counselor_id)
+        if not counselor:
+            return jsonify({"msg": "Counselor not found"}), 404
+        if counselor.role != 'counselor':
+            return jsonify({"msg": "User is not a counselor"}), 400
+
+        # Check for appointment conflicts - use datetime object for query
+        existing_appointment = mongo.db.appointments.find_one({
+            'counselor_id': ObjectId(counselor_id),
+            'date': booking_date,  # Use datetime object instead of date object
+            'time': booking_time,
+            'status': {'$in': ['pending', 'confirmed']}
+        })
+        
+        if existing_appointment:
+            return jsonify({"msg": "Counselor is not available at this time"}), 409
+
+        # Create and save appointment - use datetime object
         new_appointment = Appointment(
             student_id=student_id,
             counselor_id=counselor_id,
-            date=booking_date,
+            date=booking_date.date(),  # Store as date object for the model
             time=booking_time,
-            duration_minutes=45, # Default duration
-            type="General Counseling", # Default type
+            duration_minutes=duration_minutes,
+            type=appointment_type,
             notes_by_student=notes,
             status="pending",
             priority="medium"
         )
+        
         appointment_id = new_appointment.save()
-        return jsonify({"msg": "Counseling session booked successfully", "appointment_id": str(appointment_id)}), 201
-    except Exception as e:
-        return jsonify({"msg": f"Error booking session: {str(e)}"}), 500
+        
+        return jsonify({
+            "msg": "Counseling session booked successfully",
+            "appointment_id": str(appointment_id),
+            "appointment": new_appointment.to_dict()
+        }), 201
 
+    except ValueError as ve:
+        return jsonify({"msg": f"Validation error: {str(ve)}"}), 400
+    except Exception as e:
+        print(f"Error booking session: {str(e)}")
+        return jsonify({"msg": "Internal server error"}), 500
 @student_bp.route('/my_bookings', methods=['GET'])
 @jwt_required()
 def get_student_bookings():
