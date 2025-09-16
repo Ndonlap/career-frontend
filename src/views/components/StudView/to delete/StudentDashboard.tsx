@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react"; // Added useCallback
+import React, { useState, useEffect, useCallback } from "react";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { LayoutDashboard, Upload, BookOpen, Lightbulb, FileText, LogOut, TrendingUp, TrendingDown, Award, Calendar, Clock, Users, Target, AlertCircle, CheckCircle, Star, GraduationCap, Brain, BarChart3, Activity, BookmarkCheck, MessageSquare, Bell, Settings, Search, Filter, Download, ArrowUpRight, PlusCircle, Eye, BookMarked } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Import Services
-import StudentService from "../../../services/student";
-import AuthService from "../../../services/auth";
-// No longer need FileService directly here for upload, as it's in the new component
-import AssessmentService from "../../../services/assessments"; 
+import StudentService from "../../../../services/student";
+import AuthService from "../../../../services/auth";
+import AssessmentService from "../../../../services/assessments"; 
 
-// Import the new UploadReportCard component
-import UploadReportCard from "./UploadReportCard"; // Adjust path as needed
+// Import the new sub-components
+import UploadReportCard from "../UploadReportCard";
+import InterestPage from "./InterestPage";         // New import
+import RecommendationPage from "../RecommendationPage"; // New import
+import ViewReportPage from "./ViewReportPage";     // New import
 
 
 const StudentDashboard: React.FC = () => {
@@ -33,10 +35,9 @@ const StudentDashboard: React.FC = () => {
   const [activePage, setActivePage] = useState<"dashboard" | "upload" | "interest" | "recommendation" | "view">("dashboard");
   const [selectedView, setSelectedView] = useState<"This Term" | "Last Term" | "Yearly">("This Term");
   const [activeKPIView, setActiveKPIView] = useState<"academic" | "behavioral" | "predictive">("academic");
-  // Remove uploadedFile state from here
   const [availableAssessments, setAvailableAssessments] = useState<any[]>([]);
 
-  // --- Callback to re-fetch dashboard data (e.g., after an upload) ---
+  // --- Callback to re-fetch dashboard data (e.g., after an upload or interest submission) ---
   const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -105,166 +106,6 @@ const StudentDashboard: React.FC = () => {
     AuthService.clearTokens();
     navigate('/login');
   };
-
-  // --- Removed handleFileUpload from here as it's now in UploadReportCard.tsx ---
-  // --- Removed renderUploadPage from here as it's now a component ---
-
-  // ... (rest of renderInterestPage, renderRecommendationPage, renderViewPage remain the same)
-  const renderInterestPage = () => (
-    <div className="p-8">
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
-        <div className="text-center mb-8">
-          <BookOpen className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Career Interest Assessment</h2>
-          <p className="text-slate-600">Discover your career interests and aptitudes through comprehensive assessments</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {availableAssessments.length > 0 ? (
-            availableAssessments.map((assessment: any) => (
-              <div key={assessment.id} className="p-6 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-                <h3 className="text-lg font-semibold text-slate-800 mb-3">{assessment.name}</h3>
-                <p className="text-slate-600 mb-4">{assessment.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-green-600">{assessment.duration_minutes} minutes</span>
-                  <button 
-                    onClick={() => navigate(`/assessments/${assessment.id}/start`)}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                    Start Assessment
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="md:col-span-2 text-center text-slate-500">No assessments currently available. Please check back later.</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderRecommendationPage = () => (
-    <div className="p-8">
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
-        <div className="text-center mb-8">
-          <Lightbulb className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">AI-Powered Recommendations</h2>
-          <p className="text-slate-600">Personalized guidance for your academic and career journey</p>
-        </div>
-        
-        <div className="space-y-6">
-          {careerRecommendationsData.length > 0 ? (
-            careerRecommendationsData.map((career: any, index: number) => (
-              <div key={index} className="p-6 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold text-slate-800">{career.title}</h3>
-                    <p className="text-slate-600">Career Recommendation</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold" style={{ color: career.color || "#3B82F6" }}>
-                      {career.match}% Match
-                    </div>
-                    <p className="text-sm text-slate-600">Compatibility Score</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center p-3 bg-green-50 rounded-lg">
-                    <p className="font-semibold text-green-600">{career.growth}</p>
-                    <p className="text-xs text-slate-600">Job Growth</p>
-                  </div>
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <p className="font-semibold text-blue-600">{career.salary}</p>
-                    <p className="text-xs text-slate-600">Avg Salary</p>
-                  </div>
-                  <div className="text-center p-3 bg-purple-50 rounded-lg">
-                    <p className="font-semibold text-purple-600">{career.demand}</p>
-                    <p className="text-xs text-slate-600">Market Demand</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <span className="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-full">High Potential</span>
-                    <span className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">Trending</span>
-                  </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                    Learn More <ArrowUpRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-slate-500">No career recommendations available yet. Complete your profile and assessments!</p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderViewPage = () => (
-    <div className="p-8">
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
-        <div className="text-center mb-8">
-          <FileText className="h-16 w-16 text-blue-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Academic Performance Reports</h2>
-          <p className="text-slate-600">Comprehensive analysis of your academic journey</p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-4">
-              <BarChart3 className="h-6 w-6 text-blue-500" />
-              <h3 className="text-lg font-semibold text-slate-800">Performance Summary</h3>
-            </div>
-            <p className="text-slate-600 mb-4">Detailed breakdown of your academic performance across all subjects</p>
-            <button 
-                onClick={() => navigate('/student/reports/summary')}
-                className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-              Generate Report
-            </button>
-          </div>
-          
-          <div className="p-6 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-4">
-              <TrendingUp className="h-6 w-6 text-green-500" />
-              <h3 className="text-lg font-semibold text-slate-800">Progress Analysis</h3>
-            </div>
-            <p className="text-slate-600 mb-4">Track your improvement over time with trend analysis</p>
-            <button 
-                onClick={() => navigate('/student/reports/progress')}
-                className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-              View Trends
-            </button>
-          </div>
-          
-          <div className="p-6 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-4">
-              <Target className="h-6 w-6 text-purple-500" />
-              <h3 className="text-lg font-semibold text-slate-800">Goal Tracking</h3>
-            </div>
-            <p className="text-slate-600 mb-4">Monitor progress towards your academic and career goals</p>
-            <button className="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
-              Track Goals
-            </button>
-          </div>
-          
-          <div className="p-6 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-4">
-              <Award className="h-6 w-6 text-yellow-500" />
-              <h3 className="text-lg font-semibold text-slate-800">Achievement Report</h3>
-            </div>
-            <p className="text-slate-600 mb-4">Comprehensive overview of your accomplishments and milestones</p>
-            <button className="w-full px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
-              View Achievements
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
 
   // --- Loading and Error UI ---
   if (loading) {
@@ -976,10 +817,10 @@ const StudentDashboard: React.FC = () => {
           </div>
         )}
 
-        {activePage === "upload" && userProfile && <UploadReportCard userId={userProfile.id} onUploadSuccess={fetchDashboardData} />} {/* Pass userId and callback */}
-        {activePage === "interest" && renderInterestPage()}
-        {activePage === "recommendation" && renderRecommendationPage()}
-        {activePage === "view" && renderViewPage()}
+        {activePage === "upload" && userProfile && <UploadReportCard userId={userProfile.id} onUploadSuccess={fetchDashboardData} />}
+        {activePage === "interest" && <InterestPage availableAssessments={availableAssessments} />} {/* Render new component */}
+        {activePage === "recommendation" && <RecommendationPage careerRecommendations={careerRecommendationsData} />} {/* Render new component */}
+        {activePage === "view" && <ViewReportPage />} {/* Render new component */}
       </main>
     </div>
   );

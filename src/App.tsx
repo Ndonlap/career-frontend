@@ -3,29 +3,27 @@ import "./App.css";
 import Signup from "./views/components/authViews/Signup";
 import Homepage from "./views/components/Homepage/Homepage";
 import Login from "./views/components/authViews/Login";
-import StudLanding  from "./views/components/StudView/StudLanding";
+import StudLanding from "./views/components/StudView/StudLanding";
 import AdminDashboard from "./views/components/Dashboard/AdminDashboard";
-// import DashboardPage from "./views/components/Dashboard/DashboardPage";
-// import ManageUsers from "./views/components/Dashboard/ManageUsers";
-// import ManageTontine from "./views/components/Dashboard/ManageTontine";
 import BookCounselor from "./views/components/StudView/BookCounselor";
-import StudentDashboard from "./views/components/StudView/StudentDashboard";
-// import Interest from "./views/components/StudView/Interest";
-// import Recommendation from "./views/components/StudView/Recommendation";
-// import ViewReport from "./views/components/StudView/ViewReport";
+
+// Import the new layout and separated components
+import StudentDashboardLayout from "./views/components/StudView/StudentDashboardLayout";
+import StudentDashboardHomePage from "./views/components/StudView/StudentDashboardHomePage"; // For the index route of student dashboard
+import UploadReportCard from "./views/components/StudView/UploadReportCard"; // Now used as a direct route component
+import AssessmentPage from "./views/components/StudView/AssessmentPage"; // Lists available assessments
+import AptitudeTestPage from "./views/components/StudView/AptitudeTestPage"; // For taking a specific assessment
+import AptitudeTestResult from "./views/components/StudView/AptitudeTestResult"; // For displaying assessment results
+import RecommendationPage from "./views/components/StudView/RecommendationPage";
+import ConversationPage from "./views/components/StudView/ConversationPage"; // New
+import StudentSetting from "./views/components/StudView/StudentSetting";     // New
+
 import CounselorDashboard from "./views/components/CounselorView/CounselorDashboard";
 import Services from "./views/components/Homepage/Services";
 import Resources from "./views/components/Homepage/Resources";
 import FAQPage from "./utils/components/other components/FAQPage";
 import Footer from "./utils/components/other components/Footer";
-// import NotificationList from "./views/components/globalView/NotificationList";
-// import Secretarypage from "./views/components/secretaryView/Secretarypage";
-// import Payouts from "./views/components/globalView/Payouts";
-// import MakeContribution from "./views/components/globalView/MakeContribution";
-// import TontineGroups from "./utils/components/other components/TontineGroups";
-// import TontineReport from "./views/components/secretaryView/TontineReport";
 
-// import CheckboxWithTerms from "./pages/Login/CheckboxWithTerms";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -33,56 +31,48 @@ import {
   RouterProvider,
   Outlet
 } from 'react-router-dom'
-// import StudLanding from "./views/components/StudView/StudLanding";
-// import { Route, BrowserRouter as Router, Routes,Outlet } from "react-router-dom";
-// import UserLanding from "./views/components/globalView/UserLanding";
-// import VerifyCode from "./views/components/authViews/VerifyCode";
-
-// import { PrimeReactProvider } from 'primereact/api';
-
 
 
 function App() {
-  //    function MyApp({ Component, pageProps }) {
-  //     return (
-  //         <PrimeReactProvider>
-  //             <Component {...pageProps} />
-  //         </PrimeReactProvider>
-  //     );
-  // }
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Outlet />}>
-        <Route path="/" element={<Homepage />} />
+        <Route index element={<Homepage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-         <Route
-          path="/studLanding"
-          element={<StudLanding />}
-        />
-         <Route path="/Bookcounselor" element={<BookCounselor />} />
-         <Route path="/StudentDashboard" element={<StudentDashboard />} />
-         <Route path="/AdminDashboard" element={<AdminDashboard />} />
-         <Route path="/CounselorDashboard" element={<CounselorDashboard />} />
-         <Route path="/Services" element={<Services />} />
-         <Route path="/Resources" element={<Resources />} />
-         <Route path="/FAQPage" element={<FAQPage />} />
-         <Route path="/Footer" element={<Footer />} />
+
+        {/* Top-level StudLanding, if still used outside StudentDashboardLayout */}
+        <Route path="/studLanding" element={<StudLanding />} />
+
+        {/* Nested Routes for Student Dashboard */}
+        {/* StudentDashboardLayout will provide the common sidebar and header */}
+        <Route path="/StudentDashboard" element={<StudentDashboardLayout />}>
+          {/* <Route index element={<StudentDashboardHomePage />} /> */}
+          <Route path="upload-records" element={<UploadReportCard />} /> 
+          <Route path="assessments" element={<Outlet />} > {/* Nested route for assessments */}
+            <Route index element={<AssessmentPage />} /> {/* Lists available assessments */}
+            <Route path=":assessmentId/start" element={<AptitudeTestPage />} /> {/* Route for taking an assessment */}
+            <Route path=":assessmentId/result" element={<AptitudeTestResult />} /> {/* Route for displaying results */}
+          </Route>
+
+          <Route path="recommendations" element={<RecommendationPage />} />
+          <Route path="conversation" element={<ConversationPage />} />
+          <Route path="settings" element={<StudentSetting />} />
+          <Route path="Bookcounselor" element={<BookCounselor />} />
+        </Route>
+        
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        <Route path="/CounselorDashboard" element={<CounselorDashboard />} />
+        <Route path="/Services" element={<Services />} />
+        <Route path="/Resources" element={<Resources />} />
+        <Route path="/FAQPage" element={<FAQPage />} />
+        <Route path="/Footer" element={<Footer />} />
       </Route>
     )
   )
   return (
     <RouterProvider router={router} />
-  
-
   );
-
 }
-
-
-
-
-
-
 
 export default App;

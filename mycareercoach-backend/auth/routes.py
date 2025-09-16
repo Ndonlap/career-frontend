@@ -79,8 +79,9 @@ def refresh():
 @auth_bp.route('/me', methods=['GET'])
 @jwt_required() # Requires a valid access token
 def get_current_user_profile():
-    identity = get_jwt_identity()
-    user_id = identity['id']
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
+    user_id = current_user_identity['id']
     
     user = User.find_by_id(user_id)
     if not user:

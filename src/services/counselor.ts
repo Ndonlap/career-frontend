@@ -10,6 +10,7 @@ const CounselorService = {
   getRecommendations: () => api.get('/counselor/recommendations'),
   generateRecommendationForStudent: (studentId: any) => api.post(`/counselor/recommendations/generate/${studentId}`),
   getQuickStats: () => api.get('/counselor/quick_stats'),
+   getAvailableCounselors: () => api.get('/counselor/available_counselors'),
 };
 
 export default CounselorService;

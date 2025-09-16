@@ -5,7 +5,8 @@ load_dotenv() # Load environment variables from .env file
 
 class Config:
     # MongoDB Configuration
-    MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/mycareercoach_db")
+    # MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/mycareercoach_db")
+    MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://AndersonKamsong:Ander123@cluster0.9rlip3r.mongodb.net/mycareercoach_db")
 
     # JWT Configuration
     # A strong secret key is crucial for security. Generate a random one.

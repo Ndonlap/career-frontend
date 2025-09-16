@@ -26,8 +26,14 @@ class AcademicRecord:
     @classmethod
     def find_by_student_id(cls, student_id):
         records_data = mongo.db[cls.collection_name].find({"student_id": ObjectId(student_id)})
-        return [cls(student_id=str(r['student_id']), **r) for r in records_data]
-
+        records = []
+        for r in records_data:
+            # Create a copy of the document without student_id to avoid duplication
+            record_data = r.copy()
+            record_data.pop('student_id', None)  # Remove student_id to avoid conflict
+            records.append(cls(student_id=str(r['student_id']), **record_data))
+        return records
+    
     def to_dict(self):
         doc = {k: v for k, v in self.__dict__.items() if k != 'password_hash'}
         doc['id'] = str(doc.pop('_id'))

@@ -10,15 +10,21 @@ import random
 from auth.models import User
 from blueprints.shared.models import AcademicRecord, Appointment, Recommendation, Course, Career, Skill
 from blueprints.assessments.models import AssessmentResult # For student results
-
+import json
 
 # --- Helper Functions for Authorization ---
 def check_counselor_role():
-    identity = get_jwt_identity()
-    if identity.get('role') != 'counselor':
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
+    if current_user_identity.get('role') != 'counselor':
         return jsonify({"msg": "Access denied: Counselors only"}), 403
     return None # No error
-
+def check_student_role(): # Reusing this from student blueprint, might be in a shared auth helper
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
+    if current_user_identity.get('role') != 'student':
+        return jsonify({"msg": "Access denied: Students only"}), 403
+    return None
 
 # --- Helper Functions for Data Aggregation (can be moved to services/counselor_service.py) ---
 
@@ -191,6 +197,31 @@ def get_priority_students(counselor_id):
 
 
 # --- Routes ---
+
+@counselor_bp.route('/available_counselors', methods=['GET'])
+@jwt_required() # This endpoint is for authenticated students to view counselors
+def get_available_counselors():
+    error = check_student_role() # Ensure a student is making this request
+    if error: return error
+
+    try:
+        # Find all users with role "counselor" and status "active"
+        counselors_cursor = mongo.db.users.find(
+            {"role": "counselor", "status": "active"},
+            {"_id": 1, "first_name": 1, "last_name": 1, "specialization": 1, "rating": 1} # Project only necessary fields
+        )
+        
+        counselors_list = []
+        for c_data in counselors_cursor:
+            c_data['id'] = str(c_data['_id']) # Convert ObjectId to string
+            c_data.pop('_id') # Remove original _id
+            counselors_list.append(c_data)
+            
+        return jsonify(counselors_list), 200
+    except Exception as e:
+        current_app.logger.error(f"Error fetching available counselors: {e}")
+        return jsonify({"msg": f"Error fetching available counselors: {str(e)}"}), 500
+
 
 @counselor_bp.route('/profile', methods=['GET'])
 @jwt_required()
