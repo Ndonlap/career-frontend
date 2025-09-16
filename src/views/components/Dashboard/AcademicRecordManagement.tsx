@@ -168,7 +168,7 @@ const AcademicRecordManagement: React.FC = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await AdminService.deleteRecord(recordId);
+          await AdminService.deleteAcademicRecord(recordId);
           Swal.fire("Deleted!", "Academic record has been deleted.", "success");
           fetchAcademicRecords();
           fetchStats();
