@@ -82,9 +82,9 @@ function App() {
 
         {/* Nested Routes for Counselor Dashboard */}
         <Route path="/CounselorDashboard" element={<CounselorDashboardLayout />}>
-          {/* <Route index element={<CounselorDashboardHomePage />} /> */}
+          <Route index element={<CounselorDashboardHomePage />} />
           <Route path="Student-Management" element={<StudentManagement />} />
-          <Route path="recommendations" element={<CounselorRecommendationsPage />} />
+          {/* <Route path="recommendations" element={<CounselorRecommendationsPage />} /> */}
           <Route path="appointment" element={<CounselorAppointmentsPage />} />
           <Route path="conversation" element={<CounselorConversationPage />} />
           <Route path="settings" element={<CounselorSetting />} />

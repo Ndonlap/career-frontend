@@ -46,7 +46,7 @@ const AccountManagement: React.FC = () => {
         status: filterStatus,
         search: searchQuery
       });
-      
+        console.log("response",response.data)
       const fetchedUsers: UserAccount[] = response.data.map((user: any) => ({
         _id: user._id || user.id,
         email: user.email,

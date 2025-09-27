@@ -6,6 +6,7 @@ const CounselorService = {
   getAssignedStudents: (filters = {}) => api.get('/counselor/students', { params: filters }),
   getSingleStudentDetails: (studentId: any) => api.get(`/counselor/students/${studentId}`),
   getAppointments: (filters = {}) => api.get('/counselor/appointments', { params: filters }),
+  getConfirmedStudents: (filters = {}) => api.get('/counselor/students/confirmed', { params: filters }),
   updateAppointmentStatus: (appointmentId: any, newStatus: any) => api.put(`/counselor/appointments/${appointmentId}/status`, { status: newStatus }),
   getRecommendations: () => api.get('/counselor/recommendations'),
   generateRecommendationForStudent: (studentId: any) => api.post(`/counselor/recommendations/generate/${studentId}`),

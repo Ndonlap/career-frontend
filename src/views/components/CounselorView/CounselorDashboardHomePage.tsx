@@ -1,13 +1,76 @@
 import React, { useEffect } from "react";
 import { BarChart, Bar, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { Users, Calendar, MessageSquare, Lightbulb, FileText, TrendingUp, TrendingDown, Clock, CheckCircle, AlertCircle, Target, Brain, Search, Filter, Download, Bell, Settings, UserCheck, BookOpen, Award, Star, ArrowUpRight, PlusCircle, Eye, Edit, MoreVertical, CalendarPlus, MessageCircle, BarChart3, Activity, GraduationCap, HeartHandshake, Zap, ChevronRight, MapPin, Phone, Mail } from "lucide-react";
-import { useCounselorDashboard } from './CounselorDashboardLayout'; // Import context hook
+import { useCounselorDashboard } from './CounselorDashboardLayout';
 import { useNavigate } from "react-router-dom";
 
+// Interface matching backend response structure
+interface DashboardData {
+  counselor_profile: any;
+  kpi_data: {
+    active_students?: number;
+    completion_rate?: number;
+    satisfaction_score?: number;
+    pending_appointments?: number;
+    monthly_growth?: number;
+    // Add other KPI fields as needed
+  };
+  student_engagement_analytics: Array<{
+    period: string;
+    sessions: number;
+    satisfaction: number;
+    completion_rate: number;
+  }>;
+  session_effectiveness_data: Array<{
+    category: string;
+    achieved: number;
+    target: number;
+  }>;
+  achievement_metrics: Array<{
+    title: string;
+    count: number;
+    change: string;
+    icon?: string;
+    color: string;
+  }>;
+  career_interest_distribution: Array<{
+    name: string;
+    value: number;
+    color: string;
+  }>;
+  priority_students: Array<{
+    id: string;
+    name: string;
+    grade: string;
+    risk_level: "Low" | "Medium" | "High";
+    last_session: string;
+    next_appointment?: string;
+    concerns: string[];
+    gpa?: number;
+    attendance?: number;
+    student_id: string;
+  }>;
+  recent_activities: Array<{
+    id: string;
+    type: "session" | "recommendation" | "appointment" | "alert";
+    student: string;
+    action: string;
+    time: string;
+    outcome: string;
+  }>;
+  upcoming_appointments: Array<{
+    id: string;
+    student: string;
+    time: string;
+    type: string;
+    duration: string;
+    priority: "high" | "medium" | "low";
+    status: "pending" | "confirmed";
+  }>;
+}
 
 const CounselorDashboardHomePage: React.FC = () => {
   const navigate = useNavigate();
-  // Consume data and functions from the layout context
   const { 
     counselorProfile, 
     kpiData, 
@@ -16,19 +79,20 @@ const CounselorDashboardHomePage: React.FC = () => {
     setSelectedTimeframe 
   } = useCounselorDashboard();
 
-  // --- Data from context's kpiData (or fetched directly if not part of layout summary) ---
-  // These would ideally be part of the `kpiData` object fetched by the layout
-  // For now, mapping from original component's hardcoded structure to context's kpiData
-  const studentEngagementAnalytics = kpiData.studentEngagementAnalytics || [
-    { month: "Jan", sessions: 45, satisfaction: 4.5, completion: 87 },
-    { month: "Feb", sessions: 52, satisfaction: 4.6, completion: 89 },
-    { month: "Mar", sessions: 48, satisfaction: 4.4, completion: 85 },
-    { month: "Apr", sessions: 61, satisfaction: 4.7, completion: 92 },
-    { month: "May", sessions: 58, satisfaction: 4.8, completion: 94 },
-    { month: "Jun", sessions: 67, satisfaction: 4.9, completion: 96 }
+  // Map backend data to frontend structure
+  const dashboardData: DashboardData = kpiData as DashboardData || {};
+  
+  // Extract and transform data with fallbacks
+  const studentEngagementAnalytics = dashboardData.student_engagement_analytics || [
+    { period: "Jan", sessions: 45, satisfaction: 4.5, completion_rate: 87 },
+    { period: "Feb", sessions: 52, satisfaction: 4.6, completion_rate: 89 },
+    { period: "Mar", sessions: 48, satisfaction: 4.4, completion_rate: 85 },
+    { period: "Apr", sessions: 61, satisfaction: 4.7, completion_rate: 92 },
+    { period: "May", sessions: 58, satisfaction: 4.8, completion_rate: 94 },
+    { period: "Jun", sessions: 67, satisfaction: 4.9, completion_rate: 96 }
   ];
 
-  const careerInterestDistribution = kpiData.careerInterestDistribution || [
+  const careerInterestDistribution = dashboardData.career_interest_distribution || [
     { name: "STEM", value: 35, color: "#3B82F6" },
     { name: "Healthcare", value: 22, color: "#10B981" },
     { name: "Business", value: 18, color: "#F59E0B" },
@@ -37,7 +101,7 @@ const CounselorDashboardHomePage: React.FC = () => {
     { name: "Other", value: 5, color: "#6B7280" }
   ];
 
-  const sessionOutcomeData = kpiData.sessionOutcomeData || [
+  const sessionOutcomeData = dashboardData.session_effectiveness_data || [
     { category: "Career Clarity", achieved: 78, target: 85 },
     { category: "Academic Planning", achieved: 92, target: 90 },
     { category: "Skill Development", achieved: 85, target: 88 },
@@ -45,32 +109,43 @@ const CounselorDashboardHomePage: React.FC = () => {
     { category: "Decision Making", achieved: 76, target: 80 }
   ];
 
-  const priorityStudents = kpiData.priorityStudents || [ // from context, or fetch here
-    { id: "1", name: "Sarah Chen", grade: "12th Grade", riskLevel: "Medium", lastSession: "2 days ago", nextAppointment: "Dec 15, 2:00 PM", concerns: ["Academic Stress", "Career Uncertainty"], gpa: 3.2, attendance: 85, avatar: "SC" },
-    { id: "2", name: "Marcus Johnson", grade: "11th Grade", riskLevel: "High", lastSession: "5 days ago", nextAppointment: "Dec 14, 10:00 AM", concerns: ["Family Issues", "College Prep"], gpa: 2.8, attendance: 78, avatar: "MJ" },
-    { id: "3", name: "Emily Rodriguez", grade: "12th Grade", riskLevel: "Low", lastSession: "1 week ago", nextAppointment: "Dec 16, 3:30 PM", concerns: ["College Applications"], gpa: 3.8, attendance: 95, avatar: "ER" }
-  ];
+  const priorityStudents = dashboardData.priority_students?.map(student => ({
+    id: student.id,
+    name: student.name,
+    grade: student.grade,
+    riskLevel: student.risk_level,
+    lastSession: student.last_session,
+    nextAppointment: student.next_appointment || "No upcoming appointment",
+    concerns: student.concerns || [],
+    gpa: student.gpa || 0.0,
+    attendance: student.attendance || 0,
+    avatar: student.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2),
+    student_id: student.student_id
+  })) || [];
 
-  const recentActivities = kpiData.recentActivities || [ // from context, or fetch here
-    { id: "1", type: "session", student: "Alex Thompson", action: "Completed career assessment session", time: "2 hours ago", outcome: "Positive" },
-    { id: "2", type: "recommendation", student: "Lisa Park", action: "Generated college recommendation list", time: "4 hours ago", outcome: "Delivered" }
-  ];
+  const recentActivities = dashboardData.recent_activities || [];
+  
+  const upcomingAppointments = dashboardData.upcoming_appointments || [];
 
-  const upcomingAppointments = kpiData.upcomingAppointments || [ // from context, or fetch here
-    { id: "1", student: "Hannah Wilson", time: "Today, 2:00 PM", type: "Career Planning", duration: "45 min", priority: "high", status: "confirmed" }
+  const achievementMetrics = dashboardData.achievement_metrics || [
+    { title: "Students Graduated", count: 45, change: "+8 this month", color: "blue" },
+    { title: "Career Matches Made", count: 127, change: "+15 this week", color: "green" }
   ];
-
-  const achievementMetrics = kpiData.achievementMetrics || [ // from context, or fetch here
-    { title: "Students Graduated", count: 45, change: "+8 this month", icon: GraduationCap, color: "blue" },
-    { title: "Career Matches Made", count: 127, change: "+15 this week", icon: Target, color: "green" }
-  ];
-
 
   // Effect to re-fetch dashboard data when timeframe changes
   useEffect(() => {
-    fetchDashboardData(selectedTimeframe); // Trigger data fetch in layout when local timeframe changes
+    fetchDashboardData(selectedTimeframe);
   }, [selectedTimeframe, fetchDashboardData]);
 
+  // Helper function to get icon component
+  const getIconComponent = (iconName: string) => {
+    const iconMap: { [key: string]: React.ComponentType<any> } = {
+      Users, Calendar, MessageSquare, Lightbulb, FileText, TrendingUp, 
+      TrendingDown, Clock, CheckCircle, AlertCircle, Target, Brain,
+      UserCheck, BookOpen, Award, Star, GraduationCap, HeartHandshake, Zap
+    };
+    return iconMap[iconName] || Award;
+  };
 
   return (
     <div className="p-8 space-y-8">
@@ -78,7 +153,7 @@ const CounselorDashboardHomePage: React.FC = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold text-slate-800 mb-2">
-            Welcome back, {counselorProfile.first_name} {counselorProfile.last_name}
+            Welcome back, {counselorProfile?.first_name} {counselorProfile?.last_name}
           </h1>
           <p className="text-slate-600 text-lg">
             Managing student success and career development
@@ -96,7 +171,7 @@ const CounselorDashboardHomePage: React.FC = () => {
           </div>
           <button className="p-3 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 transition-colors relative">
             <Bell className="h-5 w-5 text-slate-600" />
-            <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span> {/* Hardcoded badge, ideally dynamic */}
+            <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
           </button>
           <button className="p-3 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 transition-colors">
             <Download className="h-5 w-5 text-slate-600" />
@@ -125,7 +200,7 @@ const CounselorDashboardHomePage: React.FC = () => {
         ))}
       </div>
 
-      {/* Enhanced KPI Cards */}
+      {/* Enhanced KPI Cards - Updated to use backend data */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-gradient-to-br from-blue-500 to-blue-200 rounded-2xl shadow-lg p-6 text-white">
           <div className="flex items-center justify-between mb-4">
@@ -135,12 +210,12 @@ const CounselorDashboardHomePage: React.FC = () => {
             <div className="text-right">
               <div className="flex items-center gap-1 text-blue-100">
                 <TrendingUp className="h-3 w-3" />
-                <span className="text-sm">+{kpiData.monthlyGrowth || 0}%</span>
+                <span className="text-sm">+{dashboardData.kpi_data?.monthly_growth || 0}%</span>
               </div>
             </div>
           </div>
           <h4 className="text-blue-100 text-sm font-medium">Active Students</h4>
-          <p className="text-3xl font-bold mb-2">{kpiData.activeStudents || 0}</p>
+          <p className="text-3xl font-bold mb-2">{dashboardData.kpi_data?.active_students || 0}</p>
           <p className="text-blue-100 text-sm">Across all programs</p>
         </div>
 
@@ -154,7 +229,7 @@ const CounselorDashboardHomePage: React.FC = () => {
             </div>
           </div>
           <h4 className="text-green-100 text-sm font-medium">Completion Rate</h4>
-          <p className="text-3xl font-bold mb-2">{kpiData.completionRate || 0}%</p>
+          <p className="text-3xl font-bold mb-2">{dashboardData.kpi_data?.completion_rate || 0}%</p>
           <p className="text-green-100 text-sm">Goal achievement rate</p>
         </div>
 
@@ -168,7 +243,7 @@ const CounselorDashboardHomePage: React.FC = () => {
             </div>
           </div>
           <h4 className="text-purple-100 text-sm font-medium">Satisfaction Score</h4>
-          <p className="text-3xl font-bold mb-2">{kpiData.satisfactionScore?.toFixed(1) || 0}/5.0</p>
+          <p className="text-3xl font-bold mb-2">{dashboardData.kpi_data?.satisfaction_score?.toFixed(1) || 0}/5.0</p>
           <p className="text-purple-100 text-sm">Student feedback</p>
         </div>
 
@@ -182,7 +257,7 @@ const CounselorDashboardHomePage: React.FC = () => {
             </div>
           </div>
           <h4 className="text-orange-100 text-sm font-medium">Pending Appointments</h4>
-          <p className="text-3xl font-bold mb-2">{kpiData.pendingAppointments || 0}</p>
+          <p className="text-3xl font-bold mb-2">{dashboardData.kpi_data?.pending_appointments || 0}</p>
           <p className="text-orange-100 text-sm">Scheduled sessions</p>
         </div>
       </div>
@@ -217,7 +292,7 @@ const CounselorDashboardHomePage: React.FC = () => {
                   <LineChart data={studentEngagementAnalytics}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis 
-                      dataKey="month" 
+                      dataKey="period" 
                       tick={{ fontSize: 12, fill: '#64748b' }}
                     />
                     <YAxis 
@@ -250,7 +325,7 @@ const CounselorDashboardHomePage: React.FC = () => {
                     />
                     <Line 
                       type="monotone" 
-                      dataKey="completion" 
+                      dataKey="completion_rate" 
                       stroke="#F59E0B" 
                       strokeWidth={3}
                       name="Completion Rate %"
@@ -323,29 +398,31 @@ const CounselorDashboardHomePage: React.FC = () => {
             
             <div className="p-6">
               <div className="grid grid-cols-2 gap-6">
-                {achievementMetrics.map((metric, index) => (
-                  <div key={index} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
-                    <div className={`p-3 rounded-full ${
-                      metric.color === 'blue' ? 'bg-blue-100' :
-                      metric.color === 'green' ? 'bg-green-100' :
-                      metric.color === 'purple' ? 'bg-purple-100' :
-                      'bg-yellow-100'
-                    }`}>
-                      {/* You'd need a map for icons if they're dynamic */}
-                      <Award className={`h-6 w-6 ${
-                        metric.color === 'blue' ? 'text-blue-600' :
-                        metric.color === 'green' ? 'text-green-600' :
-                        metric.color === 'purple' ? 'text-purple-600' :
-                        'text-yellow-600'
-                      }`} />
+                {achievementMetrics.map((metric, index) => {
+                  const IconComponent = metric.icon ? getIconComponent(metric.icon) : Award;
+                  return (
+                    <div key={index} className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                      <div className={`p-3 rounded-full ${
+                        metric.color === 'blue' ? 'bg-blue-100' :
+                        metric.color === 'green' ? 'bg-green-100' :
+                        metric.color === 'purple' ? 'bg-purple-100' :
+                        'bg-yellow-100'
+                      }`}>
+                        <IconComponent className={`h-6 w-6 ${
+                          metric.color === 'blue' ? 'text-blue-600' :
+                          metric.color === 'green' ? 'text-green-600' :
+                          metric.color === 'purple' ? 'text-purple-600' :
+                          'text-yellow-600'
+                        }`} />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-800">{metric.count}</h4>
+                        <p className="text-sm text-slate-600">{metric.title}</p>
+                        <p className="text-xs text-green-600">{metric.change}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-slate-800">{metric.count}</h4>
-                      <p className="text-sm text-slate-600">{metric.title}</p>
-                      <p className="text-xs text-green-600">{metric.change}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -446,7 +523,7 @@ const CounselorDashboardHomePage: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <p className="text-xs text-slate-500">Next: {student.nextAppointment}</p>
                         <button 
-                            onClick={() => navigate(`/CounselorDashboard/Student-Management/${student.id}`)}
+                            onClick={() => navigate(`/CounselorDashboard/Student-Management/${student.student_id}`)}
                             className="text-blue-600 text-xs hover:underline">
                             View Profile
                         </button>

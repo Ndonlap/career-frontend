@@ -74,25 +74,25 @@ const CounselorDashboardLayout: React.FC = () => {
             const profileData = profileResponse.data;
             setCounselorProfile(profileData);
 
-            //   const dashboardSummaryResponse = await CounselorService.getDashboardSummary(timeframeParam);
-            //   const dashboardData = dashboardSummaryResponse.data;
-            setKpiData([])
-            setAssignedStudentsCount([])
-            setRecommendationsBadge([])
-            setAppointmentsBadge([])
-            //   setKpiData(dashboardData.kpi_data);
-            //   setAssignedStudentsCount(dashboardData.kpi_data.activeStudents);
-            //   setRecommendationsBadge(dashboardData.kpi_data.recommendationsMade);
-            //   setAppointmentsBadge(dashboardData.kpi_data.pendingAppointments);
-            // messagesBadge remains static for now, or fetch from a messaging service
+            // //   const dashboardSummaryResponse = await CounselorService.getDashboardSummary(timeframeParam);
+            // //   const dashboardData = dashboardSummaryResponse.data;
+            // setKpiData([])
+            // setAssignedStudentsCount(0)
+            // setRecommendationsBadge(0)
+            // setAppointmentsBadge(0)
+            // //   setKpiData(dashboardData.kpi_data);
+            // //   setAssignedStudentsCount(dashboardData.kpi_data.activeStudents);
+            // //   setRecommendationsBadge(dashboardData.kpi_data.recommendationsMade);
+            // //   setAppointmentsBadge(dashboardData.kpi_data.pendingAppointments);
+            // // messagesBadge remains static for now, or fetch from a messaging service
 
         } catch (err: any) {
             console.error("Error fetching counselor dashboard layout data:", err);
             setError(err.response?.data?.msg || "Failed to load dashboard data.");
-            if (err.response?.status === 401 || err.response?.status === 403) {
-                AuthService.clearTokens();
-                navigate('/login');
-            }
+            // if (err.response?.status === 401 || err.response?.status === 403) {
+            //     AuthService.clearTokens();
+            //     navigate('/login');
+            // }
         } finally {
             setLoading(false);
         }
@@ -143,7 +143,7 @@ const CounselorDashboardLayout: React.FC = () => {
     const sidebarNavItems = [
         { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/CounselorDashboard" },
         { id: "students", label: "Student Management", icon: Users, path: "/CounselorDashboard/Student-Management", badge: assignedStudentsCount > 0 ? String(assignedStudentsCount) : null },
-        { id: "recommendations", label: "AI Recommendations", icon: Lightbulb, path: "/CounselorDashboard/recommendations", badge: recommendationsBadge > 0 ? String(recommendationsBadge) : null },
+        // { id: "recommendations", label: "AI Recommendations", icon: Lightbulb, path: "/CounselorDashboard/recommendations", badge: recommendationsBadge > 0 ? String(recommendationsBadge) : null },
         { id: "appointments", label: "Appointments", icon: Calendar, path: "/CounselorDashboard/appointment", badge: appointmentsBadge > 0 ? String(appointmentsBadge) : null },
         { id: "conversation", label: "Messages", icon: MessageSquare, path: "/CounselorDashboard/conversation", badge: messagesBadge > 0 ? String(messagesBadge) : null },
         // { id: "analytics", label: "Analytics", icon: BarChart3, path: "/CounselorDashboard/analytics", badge: null }, // Assuming analytics data would be part of homepage or a dedicated view

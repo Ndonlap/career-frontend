@@ -465,6 +465,119 @@ def update_appointment_status(appointment_id):
     except Exception as e:
         return jsonify({"msg": f"Error updating appointment status: {str(e)}"}), 500
 
+@counselor_bp.route('/students/confirmed', methods=['GET'])
+@jwt_required()
+def get_confirmed_students():
+    # Role check
+    error = check_counselor_role()
+    if error: 
+        return error
+
+    # Get counselor identity
+    current_user_identity_str = get_jwt_identity()
+    current_user_identity = json.loads(current_user_identity_str)
+    counselor_id = current_user_identity['id']
+
+    try:
+        # MongoDB aggregation pipeline to get unique students with confirmed appointments
+        pipeline = [
+            # Match appointments for this counselor with confirmed status
+            {
+                "$match": {
+                    "counselor_id": ObjectId(counselor_id),
+                    "status": "confirmed"
+                }
+            },
+            # Group by student_id to get unique students and their latest appointment info
+            {
+                "$group": {
+                    "_id": "$student_id",
+                    "latest_appointment_date": {"$max": "$date"},
+                    "appointment_count": {"$sum": 1},
+                    "appointment_ids": {"$push": "$_id"},
+                    "latest_appointment_type": {
+                        "$last": "$type"
+                    }
+                }
+            },
+            # Lookup student details from users collection
+            {
+                "$lookup": {
+                    "from": "users",  # Adjust collection name as needed
+                    "localField": "_id",
+                    "foreignField": "_id",
+                    "as": "student_details"
+                }
+            },
+            # Unwind the student details array
+            {
+                "$unwind": {
+                    "path": "$student_details",
+                    "preserveNullAndEmptyArrays": True
+                }
+            },
+            # Project only the fields we need
+            {
+                "$project": {
+                    "student_id": "$_id",
+                    "latest_appointment_date": 1,
+                    "appointment_count": 1,
+                    "appointment_ids": 1,
+                    "latest_appointment_type": 1,
+                    "student_info": {
+                        "first_name": "$student_details.first_name",
+                        "last_name": "$student_details.last_name",
+                        "email": "$student_details.email",
+                        "contact_info": "$student_details.contact_info",
+                        "student_id": "$student_details._id",  # if you have a separate student ID field
+                        "grade_level": "$student_details.grade_level",
+                        "major": "$student_details.major",
+                        "school":"$student_details.school",
+                        "grade":"$student_details.grade",
+                        "gpa":"$student_details.gpa",
+                        "class_rank":"$student_details.class_rank",
+                        "total_students_in_class":"$student_details.total_students_in_class",
+                        "credits_completed":"$student_details.credits_completed",
+                        "total_credits_required":"$student_details.total_credits_required",
+                        "average_grade":"$student_details.average_grade",
+                        "interests":"$student_details.interests",
+                        "assigned_counselor_id":"$student_details.assigned_counselor_id",
+                        "risk_level":"$student_details.risk_level",
+                        # Add other student fields as needed
+                    }
+                }
+            },
+            # Sort by latest appointment date (most recent first)
+            {
+                "$sort": {"latest_appointment_date": -1}
+            }
+        ]
+
+        results = list(mongo.db.appointments.aggregate(pipeline))
+        
+        # Format the response
+        formatted_results = []
+        for result in results:
+            student_data = {
+                "student_id": str(result["student_id"]),
+                "appointment_count": result["appointment_count"],
+                "latest_appointment_date": result["latest_appointment_date"],
+                "latest_appointment_type": result.get("latest_appointment_type", ""),
+                "appointment_ids": [str(appt_id) for appt_id in result["appointment_ids"]],
+                "student_info": result.get("student_info", {})
+            }
+            formatted_results.append(student_data)
+
+        return jsonify({
+            "msg": "Successfully retrieved confirmed students",
+            "count": len(formatted_results),
+            "students": formatted_results
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": f"Error retrieving confirmed students: {str(e)}"}), 500
+    
+    
 @counselor_bp.route('/recommendations', methods=['GET'])
 @jwt_required()
 def get_counselor_recommendations():

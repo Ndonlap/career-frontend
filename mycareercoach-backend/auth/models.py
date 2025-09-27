@@ -14,7 +14,7 @@ class User:
         self.last_name = last_name
         self.join_date = datetime.utcnow()
         self.last_login_at = datetime.utcnow()
-        self.status = "active" # active, inactive, suspended
+        self.status = kwargs.get('status', 'active') # active, inactive, suspended
         self.avatar_initials = (first_name[0] + last_name[0]).upper() if first_name and last_name else ""
 
         # Specific fields for student role
