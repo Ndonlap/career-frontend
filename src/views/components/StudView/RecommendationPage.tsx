@@ -1,130 +1,390 @@
 import React, { useState, useEffect } from "react";
-import { Lightbulb, ArrowUpRight, Loader2 } from "lucide-react"; // Added Loader2 for loading spinner
-import { useNavigate } from "react-router-dom"; // For redirection if not authenticated
+import { Lightbulb, ArrowUpRight, Loader2, Zap, RefreshCw, Calendar, BookOpen, Target, Star, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 // Import Services
 import StudentService from "../../../services/student";
-import AuthService from "../../../services/auth"; // To check authentication
+import AuthService from "../../../services/auth";
 
-// Removed RecommendationPageProps interface as data will be fetched internally
-// interface RecommendationPageProps {
-//   careerRecommendations: any[];
-// }
+interface Recommendation {
+  id: string;
+  type: string;
+  match_score: number;
+  summary: string;
+  status: string;
+  generated_by: string;
+  recommended_courses: Array<{
+    course_title: string;
+    instructor: string;
+    duration: string;
+    skills_covered: string[];
+    rating: number;
+  }>;
+  suggested_skills: Array<{
+    skill_name: string;
+    category: string;
+    description: string;
+    priority: string;
+  }>;
+  created_at: string;
+  confidence_score?: number;
+}
 
-// Changed to a simple functional component without props
 const RecommendationPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Internal states for this component
-  const [careerRecommendations, setCareerRecommendations] = useState<any[]>([]);
+  // States for recommendations
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTab, setSelectedTab] = useState<'all' | 'career' | 'skills' | 'courses'>('all');
 
-  // --- Effect to fetch career recommendations on mount ---
-  useEffect(() => {
-    const fetchRecommendations = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Ensure user is authenticated before attempting to fetch recommendations
-        if (!AuthService.getAccessToken()) {
-          setError("Authentication required. Please log in.");
-          navigate('/login'); // Redirect to login if no token
-          return;
-        }
-        const response = await StudentService.getRecommendationsSummary();
-        // Assuming the backend returns an array of recommendations directly
-        setCareerRecommendations(response.data);
-      } catch (err: any) {
-        console.error("Error fetching career recommendations:", err);
-        setError(err.response?.data?.msg || "Failed to load career recommendations.");
-        // The Axios interceptor in api.js should also handle 401 redirects
-      } finally {
-        setLoading(false);
+  // Fetch existing recommendations on component mount
+  const fetchRecommendations = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (!AuthService.getAccessToken()) {
+        setError("Authentication required. Please log in.");
+        navigate('/login');
+        return;
       }
-    };
+      console.log("AuthService.getUserId()",AuthService.getUserId())
 
+      const response = await StudentService.getStudentRecommendations(AuthService.getUserId());
+      setRecommendations(response.data.recommendations || []);
+    } catch (err: any) {
+      console.error("Error fetching recommendations:", err);
+      setError(err.response?.data?.msg || "Failed to load recommendations.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Generate new recommendations
+  const generateNewRecommendations = async () => {
+    setGenerating(true);
+    try {
+      const result = await Swal.fire({
+        title: 'Generate New Recommendations?',
+        text: "This will create new AI-powered recommendations based on your current profile. This process takes about 30 seconds.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, generate!',
+        cancelButtonText: 'Cancel'
+      });
+
+      if (!result.isConfirmed) {
+        return;
+      }
+      const response = await StudentService.generateRecommendations();
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Recommendations Generated!',
+        text: 'Your new AI recommendations are ready.',
+        timer: 3000,
+        showConfirmButton: false
+      });
+
+      // Refresh the recommendations list
+      await fetchRecommendations();
+      
+    } catch (err: any) {
+      console.error("Error generating recommendations:", err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Generation Failed',
+        text: err.response?.data?.msg || 'Failed to generate recommendations. Please try again.'
+      });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  useEffect(() => {
     fetchRecommendations();
-  }, [navigate]); // navigate is a stable reference, but good practice to include
+  }, [navigate]);
 
-  // --- Loading and Error UI ---
+  // Filter recommendations based on selected tab
+  const filteredRecommendations = recommendations.filter(rec => {
+    if (selectedTab === 'all') return true;
+    if (selectedTab === 'career') return rec.type === 'career';
+    if (selectedTab === 'skills') return rec.suggested_skills.length > 0;
+    if (selectedTab === 'courses') return rec.recommended_courses.length > 0;
+    return true;
+  });
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Get priority color
+  const getPriorityColor = (priority: string) => {
+    switch (priority.toLowerCase()) {
+      case 'high': return 'bg-red-100 text-red-700';
+      case 'medium': return 'bg-yellow-100 text-yellow-700';
+      case 'low': return 'bg-green-100 text-green-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  // Loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <Loader2 className="animate-spin mr-2 h-6 w-6 text-blue-500" />
-        <p className="text-lg text-slate-700">Loading AI-powered recommendations...</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="animate-spin h-12 w-12 text-blue-500 mx-auto mb-4" />
+          <p className="text-lg text-slate-700">Loading your recommendations...</p>
+        </div>
       </div>
     );
   }
 
+  // Error state
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
-        <p className="text-lg text-red-600">Error: {error}</p>
-        {/* Optional: Add a button to retry or navigate home */}
-        <button onClick={() => navigate('/StudentDashboard')} className="ml-4 px-4 py-2 bg-blue-500 text-white rounded-md">
-            Go to Dashboard
-        </button>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-red-600 mb-4">Error: {error}</p>
+          <button 
+            onClick={fetchRecommendations}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
-        <div className="text-center mb-8">
-          <Lightbulb className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">AI-Powered Recommendations</h2>
-          <p className="text-slate-600">Personalized guidance for your academic and career journey</p>
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8 mb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl">
+                <Lightbulb className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-800">AI Recommendations</h1>
+                <p className="text-slate-600">Personalized career and skill guidance powered by AI</p>
+              </div>
+            </div>
+            
+            <button
+              onClick={generateNewRecommendations}
+              disabled={generating}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {generating ? (
+                <Loader2 className="animate-spin h-5 w-5" />
+              ) : (
+                <Zap className="h-5 w-5" />
+              )}
+              {generating ? 'Generating...' : 'Generate New'}
+            </button>
+          </div>
+
+          {/* Stats Summary */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <div className="text-2xl font-bold text-blue-600">{recommendations.length}</div>
+              <div className="text-sm text-slate-600">Total Recommendations</div>
+            </div>
+            <div className="text-center p-4 bg-green-50 rounded-lg">
+              <div className="text-2xl font-bold text-green-600">
+                {recommendations.filter(r => r.type === 'career').length}
+              </div>
+              <div className="text-sm text-slate-600">Career Paths</div>
+            </div>
+            <div className="text-center p-4 bg-purple-50 rounded-lg">
+              <div className="text-2xl font-bold text-purple-600">
+                {recommendations.reduce((acc, r) => acc + r.suggested_skills.length, 0)}
+              </div>
+              <div className="text-sm text-slate-600">Skills Suggested</div>
+            </div>
+            <div className="text-center p-4 bg-orange-50 rounded-lg">
+              <div className="text-2xl font-bold text-orange-600">
+                {recommendations.reduce((acc, r) => acc + r.recommended_courses.length, 0)}
+              </div>
+              <div className="text-sm text-slate-600">Courses Recommended</div>
+            </div>
+          </div>
         </div>
-        
+
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 mb-6">
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: 'all', label: 'All Recommendations', icon: Lightbulb },
+              { id: 'career', label: 'Career Paths', icon: Target },
+              { id: 'skills', label: 'Skills Development', icon: Star },
+              { id: 'courses', label: 'Recommended Courses', icon: BookOpen }
+            ].map((tab) => {
+              const IconComponent = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setSelectedTab(tab.id as any)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    selectedTab === tab.id
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  <IconComponent className="h-4 w-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Recommendations List */}
         <div className="space-y-6">
-          {careerRecommendations.length > 0 ? (
-            careerRecommendations.map((career: any, index: number) => (
-              <div key={career.id || index} className="p-6 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold text-slate-800">{career.title}</h3>
-                    <p className="text-slate-600">Career Recommendation</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold" style={{ color: career.color || "#3B82F6" }}>
-                      {career.match}% Match
+          {filteredRecommendations.length > 0 ? (
+            filteredRecommendations.map((recommendation, index) => (
+              <div key={recommendation.id} className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                {/* Recommendation Header */}
+                <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-bold text-slate-800 capitalize">
+                          {recommendation.type} Recommendations
+                        </h3>
+                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                          recommendation.status === 'Generated' 
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {recommendation.status}
+                        </span>
+                      </div>
+                      <p className="text-slate-600">{recommendation.summary}</p>
                     </div>
-                    <p className="text-sm text-slate-600">Compatibility Score</p>
+                    <div className="text-right">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Star className="h-5 w-5 text-yellow-500" />
+                        <span className="text-2xl font-bold text-slate-800">
+                          {recommendation.match_score}%
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-sm text-slate-500">
+                        <Clock className="h-4 w-4" />
+                        Generated {formatDate(recommendation.created_at)}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center p-3 bg-green-50 rounded-lg">
-                    <p className="font-semibold text-green-600">{career.growth}</p>
-                    <p className="text-xs text-slate-600">Job Growth</p>
-                  </div>
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <p className="font-semibold text-blue-600">{career.salary}</p>
-                    <p className="text-xs text-slate-600">Avg Salary</p>
-                  </div>
-                  <div className="text-center p-3 bg-purple-50 rounded-lg">
-                    <p className="font-semibold text-purple-600">{career.demand}</p>
-                    <p className="text-xs text-slate-600">Market Demand</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <span className="px-3 py-1 bg-slate-100 text-slate-700 text-sm rounded-full">High Potential</span>
-                    <span className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">Trending</span>
-                  </div>
-                  <button 
-                    onClick={() => navigate(`/StudentDashboard/recommendations/${career.id}`)} // Navigate to a detailed recommendation page
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                    Learn More <ArrowUpRight className="h-4 w-4" />
-                  </button>
+
+                {/* Recommendation Content */}
+                <div className="p-6">
+                  {/* Skills Section */}
+                  {recommendation.suggested_skills.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                        <Star className="h-5 w-5 text-yellow-500" />
+                        Recommended Skills
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {recommendation.suggested_skills.map((skill, skillIndex) => (
+                          <div key={skillIndex} className="p-3 border border-slate-200 rounded-lg">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-slate-800">{skill.skill_name}</span>
+                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(skill.priority)}`}>
+                                {skill.priority} Priority
+                              </span>
+                            </div>
+                            <p className="text-sm text-slate-600">{skill.description}</p>
+                            <div className="mt-2">
+                              <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
+                                {skill.category}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Courses Section */}
+                  {recommendation.recommended_courses.length > 0 && (
+                    <div>
+                      <h4 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-blue-500" />
+                        Recommended Courses
+                      </h4>
+                      <div className="space-y-3">
+                        {recommendation.recommended_courses.map((course, courseIndex) => (
+                          <div key={courseIndex} className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                            <div className="flex items-center justify-between mb-2">
+                              <h5 className="font-semibold text-slate-800">{course.course_title}</h5>
+                              <div className="flex items-center gap-2">
+                                <Star className="h-4 w-4 text-yellow-500" />
+                                <span className="text-sm font-medium">{course.rating}/5.0</span>
+                              </div>
+                            </div>
+                            <p className="text-sm text-slate-600 mb-2">{course.instructor} • {course.duration}</p>
+                            <div className="flex flex-wrap gap-1 mb-3">
+                              {course.skills_covered.slice(0, 3).map((skill, idx) => (
+                                <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                                  {skill}
+                                </span>
+                              ))}
+                              {course.skills_covered.length > 3 && (
+                                <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">
+                                  +{course.skills_covered.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                            <button className="text-blue-600 text-sm hover:underline flex items-center gap-1">
+                              View Course Details <ArrowUpRight className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-center text-slate-500">No career recommendations available yet. Complete your profile and assessments!</p>
+            /* Empty State */
+            <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-12 text-center">
+              <Lightbulb className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-slate-800 mb-2">No Recommendations Yet</h3>
+              <p className="text-slate-600 mb-6">
+                {selectedTab !== 'all' 
+                  ? `No ${selectedTab} recommendations found. Try generating new recommendations or check other categories.`
+                  : "You don't have any AI recommendations yet. Generate your first set of personalized recommendations!"
+                }
+              </p>
+              <button
+                onClick={generateNewRecommendations}
+                disabled={generating}
+                className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mx-auto"
+              >
+                {generating ? (
+                  <Loader2 className="animate-spin h-5 w-5" />
+                ) : (
+                  <Zap className="h-5 w-5" />
+                )}
+                {generating ? 'Generating...' : 'Generate Recommendations'}
+              </button>
+            </div>
           )}
         </div>
       </div>

@@ -272,6 +272,18 @@ class Recommendation:
         result = mongo.db[self.collection_name].insert_one(doc)
         self._id = result.inserted_id
         return self._id
+    
+    @classmethod
+    def find_by_student_id(cls, student_id):
+        results = mongo.db[cls.collection_name].find({"student_id": ObjectId(student_id)})
+        recommendations = []
+        for result_data in results:
+            result_data = result_data.copy()
+            student_id_str = str(result_data.pop('student_id'))
+            if 'counselor_id' in result_data and result_data['counselor_id']:
+                result_data['counselor_id'] = str(result_data['counselor_id'])
+            recommendations.append(cls(student_id=student_id_str, **result_data))
+        return recommendations
 
     def to_dict(self):
         doc = {k: v for k, v in self.__dict__.items() if k != '_id'}
@@ -286,3 +298,5 @@ class Recommendation:
         doc['created_at'] = doc['created_at'].isoformat()
         doc['updated_at'] = doc['updated_at'].isoformat()
         return doc
+    
+    

@@ -9,10 +9,11 @@ const AuthService = {
   getProfile: () => api.get('/auth/me'),
 
   // Helper to store/retrieve tokens
-  setTokens: (accessToken: any, refreshToken: any, role: any) => {
+  setTokens: (accessToken: any, refreshToken: any, role: any,userId: any) => {
     localStorage.setItem('access_token', accessToken);
     localStorage.setItem('refresh_token', refreshToken);
     localStorage.setItem('user_role', role); // Store role for client-side routing
+    localStorage.setItem('user_id', userId); // Store role for client-side routing
   },
   clearTokens: () => {
     localStorage.removeItem('access_token');
@@ -22,6 +23,7 @@ const AuthService = {
   getAccessToken: () => localStorage.getItem('access_token'),
   getRefreshToken: () => localStorage.getItem('refresh_token'),
   getUserRole: () => localStorage.getItem('user_role'),
+  getUserId: () => localStorage.getItem('user_id'),
 };
 
 export default AuthService;

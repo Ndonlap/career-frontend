@@ -19,6 +19,15 @@ const StudentService = {
   getDashboardSummary: () => api.get('/student/dashboard_summary'),
   getPerformanceAnalytics: (viewType: any) => api.get(`/student/performance_analytics?view=${viewType}`),
   getLandingPageStats: () => api.get('/student/landing_page_stats'),
+  getStudentRecommendations(studentId: string|null) {
+    return api.get(`/student/${studentId}/recommendations`);
+  }, 
+  generateRecommendations() {
+    return api.post(`/student/generate-recommendations`);
+  }, 
+  getRecommendationDetails(recommendationId: string) {
+    return api.get(`/student/recommendations/${recommendationId}`);
+  }
 };
 
 export default StudentService;

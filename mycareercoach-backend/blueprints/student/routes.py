@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import os
 import random # For random questions later
 import json
+from services.recommendation_service import RecommendationService
 
 # Import models
 from auth.models import User
@@ -693,3 +694,52 @@ def get_student_landing_page_stats():
 # - submit_aptitude_test
 # - get_detailed_report_data (for ViewReport.tsx)
 # - etc.
+
+
+@student_bp.route('/generate-recommendations', methods=['POST'])
+@jwt_required()
+def generate_student_recommendations():
+    """Generate AI recommendations for a student"""
+    try:
+        current_user_identity_str = get_jwt_identity()
+        current_user_identity = json.loads(current_user_identity_str)
+        student_id = current_user_identity['id']
+        user_role = current_user_identity['role']
+
+        if user_role != 'student':
+            return jsonify({"msg": "Access denied: Not a student"}), 403
+        
+        recommendation_service = RecommendationService()
+        print("here init ok")
+        result = recommendation_service.generate_recommendations(student_id)
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        print(e)
+        return jsonify({
+            'success': False,
+            'message': f'Erreur lors de la génération des recommandations: {str(e)}'
+        }), 500
+
+@student_bp.route('/<student_id>/recommendations', methods=['GET'])
+@jwt_required()
+def get_student_recommendations(student_id):
+    """Get existing recommendations for a student"""
+    try:
+        print("here",student_id)
+        recommendations = Recommendation.find_by_student_id(student_id)
+        
+        return jsonify({
+            'success': True,
+            'recommendations': [rec.to_dict() for rec in recommendations]
+        }), 200
+        
+    except Exception as e:
+        print(e)
+        return jsonify({
+            'success': False,
+            'message': f'Erreur lors de la récupération des recommandations: {str(e)}'
+        }), 500
+        
+        

@@ -57,10 +57,10 @@ const Login: React.FC = () => {
     try {
       // Use AuthService.login instead of raw fetch
       const response = await AuthService.login({ email, password });
-      const { access_token, refresh_token, role } = response.data;
+      const { access_token, refresh_token, role,userId} = response.data;
 
       // Store tokens and role using AuthService helper
-      AuthService.setTokens(access_token, refresh_token, role);
+      AuthService.setTokens(access_token, refresh_token, role,userId);
 
       Swal.fire({
         icon: "success",

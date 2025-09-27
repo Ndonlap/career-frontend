@@ -67,7 +67,7 @@ def login():
 
     # access_token = create_access_token(identity={'id': str(user._id), 'role': user.role})
     # refresh_token = create_refresh_token(identity={'id': str(user._id), 'role': user.role})
-    return jsonify(access_token=access_token, refresh_token=refresh_token, role=user.role), 200
+    return jsonify(access_token=access_token, refresh_token=refresh_token, role=user.role, userId=str(user._id) ), 200
 
 @auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True) # Requires a refresh token

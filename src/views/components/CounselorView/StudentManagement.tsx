@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useCounselorDashboard } from './CounselorDashboardLayout';
 import CounselorService from "../../../services/counselor";
 import Swal from "sweetalert2"; // For user feedback
+import StudentService from "../../../services/student";
 
 interface Student {
   id: string;
@@ -126,7 +127,7 @@ const CounselorStudentManagement: React.FC = () => {
     setLoadingRecommendations(true);
     try {
       // Assuming you have a service method to get recommendations
-      const response = await CounselorService.getStudentRecommendations(studentId);
+      const response = await StudentService.getStudentRecommendations(studentId);
       setRecommendations(response.data.recommendations || []);
       setShowRecommendations(true);
     } catch (err: any) {
