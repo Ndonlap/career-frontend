@@ -1,71 +1,122 @@
-[
-  {
-    "title": "Ingénieur Agronome",
-    "description": "Spécialiste de l'agriculture et de l'élevage au Cameroun",
-    "industry": "Agriculture",
-    "market_demand": "Élevée",
-    "growth_rate": 15,
-    "average_salary": 1800000,
-    "job_openings_estimate": "High",
-    "required_skills": [
-      "Agronomie",
-      "Gestion de projet",
-      "Connaissances sols tropicaux"
-    ],
-    "educational_paths": [
-      "Master en Agronomie",
-      "Ingénieur agricole"
-    ],
-    "industry_partners": [
-      "IRAD",
-      "MINADER",
-      "SODECOTON"
-    ]
-  },
-  {
-    "title": "Développeur Logiciel",
-    "description": "Création d'applications et solutions digitales pour le marché camerounais",
-    "industry": "Technologie",
-    "market_demand": "Très élevée",
-    "growth_rate": 25,
-    "average_salary": 2500000,
-    "job_openings_estimate": "Very High",
-    "required_skills": [
-      "Programmation",
-      "Base de données",
-      "Développement mobile"
-    ],
-    "educational_paths": [
-      "Licence en informatique",
-      "École d'ingénieur"
-    ],
-    "industry_partners": [
-      "Orange Cameroun",
-      "MTN Cameroon",
-      "Startups locales"
-    ]
-  },
-  {
-    "title": "Expert en Commerce International",
-    "description": "Spécialiste des échanges commerciaux avec les pays de la CEMAC",
-    "industry": "Commerce",
-    "market_demand": "Moyenne",
-    "growth_rate": 12,
-    "average_salary": 2200000,
-    "job_openings_estimate": "Medium",
-    "required_skills": [
-      "Douanes",
-      "Logistique",
-      "Négociation"
-    ],
-    "educational_paths": [
-      "Master en commerce international",
-      "École de commerce"
-    ],
-    "industry_partners": [
-      "Douanes camerounaises",
-      "Chambre de commerce",
-      "Entreprises exportatrices"
-    ]
-  }
-]
+// [
+//   {
+//     "title": "Biologiste",
+//     "description": "Spécialiste de l’étude des organismes vivants et de la recherche en biologie appliquée.",
+//     "industry": "Biologie",
+//     "market_demand": "Élevée",
+//     "growth_rate": 14,
+//     "average_salary": 1900000,
+//     "job_openings_estimate": "High",
+//     "required_skills": [
+//       "Analyse cellulaire",
+//       "Techniques de laboratoire",
+//       "Écologie"
+//     ],
+//     "educational_paths": [
+//       "Licence en biologie",
+//       "Master en sciences biologiques",
+//       "Doctorat en biologie"
+//     ],
+//     "industry_partners": [
+//       "Universités de recherche",
+//       "Laboratoires médicaux",
+//       "Instituts de recherche en santé"
+//     ]
+//   },
+//   {
+//     "title": "Chimiste Industriel",
+//     "description": "Expert dans les procédés chimiques, la synthèse de matériaux et le contrôle qualité.",
+//     "industry": "Chimie",
+//     "market_demand": "Bonne",
+//     "growth_rate": 10,
+//     "average_salary": 2100000,
+//     "job_openings_estimate": "Medium",
+//     "required_skills": [
+//       "Chimie organique",
+//       "Analyse de laboratoire",
+//       "Procédés industriels"
+//     ],
+//     "educational_paths": [
+//       "Licence en chimie",
+//       "Master en chimie appliquée",
+//       "Ingénieur chimiste"
+//     ],
+//     "industry_partners": [
+//       "CIMENCAM",
+//       "Laboratoires pharmaceutiques",
+//       "Industries agro-alimentaires"
+//     ]
+//   },
+//   {
+//     "title": "Physicien Appliqué",
+//     "description": "Professionnel de la recherche et de l’ingénierie basé sur les principes de la physique.",
+//     "industry": "Physique",
+//     "market_demand": "Moyenne",
+//     "growth_rate": 9,
+//     "average_salary": 2000000,
+//     "job_openings_estimate": "Medium",
+//     "required_skills": [
+//       "Mécanique",
+//       "Électromagnétisme",
+//       "Analyse scientifique"
+//     ],
+//     "educational_paths": [
+//       "Licence en physique",
+//       "Master en physique appliquée",
+//       "Doctorat en physique"
+//     ],
+//     "industry_partners": [
+//       "SONARA",
+//       "Sociétés d’ingénierie",
+//       "Instituts de recherche"
+//     ]
+//   },
+//   {
+//     "title": "Statisticien",
+//     "description": "Spécialiste de l’analyse des données et de la modélisation mathématique pour la prise de décision.",
+//     "industry": "Mathématiques",
+//     "market_demand": "Très élevée",
+//     "growth_rate": 20,
+//     "average_salary": 2300000,
+//     "job_openings_estimate": "Very High",
+//     "required_skills": [
+//       "Statistiques",
+//       "Analyse de données",
+//       "Probabilités"
+//     ],
+//     "educational_paths": [
+//       "Licence en mathématiques",
+//       "Master en statistiques",
+//       "Actuariat"
+//     ],
+//     "industry_partners": [
+//       "Instituts de recherche",
+//       "Banques",
+//       "Compagnies d’assurance"
+//     ]
+//   },
+//   {
+//     "title": "Développeur Logiciel",
+//     "description": "Création d’applications, de systèmes informatiques et de solutions digitales.",
+//     "industry": "Informatique",
+//     "market_demand": "Très élevée",
+//     "growth_rate": 25,
+//     "average_salary": 2500000,
+//     "job_openings_estimate": "Very High",
+//     "required_skills": [
+//       "Programmation",
+//       "Bases de données",
+//       "Développement web et mobile"
+//     ],
+//     "educational_paths": [
+//       "Licence en informatique",
+//       "École d’ingénieur en informatique",
+//       "Formations spécialisées en développement"
+//     ],
+//     "industry_partners": [
+//       "Orange Cameroun",
+//       "MTN Cameroon",
+//       "Startups technologiques"
+//     ]
+//   }
+// ]

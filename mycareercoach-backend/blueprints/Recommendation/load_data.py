@@ -20,37 +20,37 @@ class RecommendationSimulator:
     
     def get_sample_data(self, data_type):
         """Provide sample data based on your structure"""
-        if data_type == 'skills':
-            return [{
-                "name": "Agriculture durable",
-                "description": "Techniques agricoles respectueuses de l'environnement adaptées au climat camerounais",
-                "category": "Agriculture",
-                "related_courses": ["Agriculture et Agro-industrie"]
-            }]
-        elif data_type == 'courses':
-            return [{
-                "title": "Agriculture et Agro-industrie",
-                "description": "Formation en techniques agricoles modernes et transformation des produits agricoles adaptées au contexte camerounais",
-                "category": "Agriculture",
-                "instructor": "Dr. Jean Mbarga",
-                "duration": "6 mois",
-                "prerequisites": ["Baccalauréat"],
-                "skills_gained": ["Techniques agricoles modernes", "Gestion d'exploitation", "Transformation agro-alimentaire"],
-                "related_careers": ["Agronome", "Agro-industriel", "Technicien agricole"],
-                "students_enrolled_count": 350,
-                "average_rating": 4.5,
-                "status": "active"
-            }]
-        elif data_type == 'careers':
-            return [{
-                "title": "Ingénieur Agronome",
-                "description": "Spécialiste de l'agriculture et de l'élevage au Cameroun",
-                "industry": "Agriculture",
-                "market_demand": "Élevée",
-                "growth_rate": 15,
-                "average_salary": 1800000,
-                "job_openings_estimate": "High",
-                "required_skills": ["Agronomie", "Gestion de projet", "Connaissances sols tropicaux"],
-                "educational_paths": ["Master en Agronomie", "Ingénieur agricole"],
-                "industry_partners": ["IRAD", "MINADER", "SODECOTON"]
-            }]
+#         if data_type == 'skills':
+#     return [{
+#         "name": "Analyse biologique",
+#         "description": "Techniques de laboratoire pour l’étude des cellules, tissus et micro-organismes",
+#         "category": "Biologie",
+#         "related_courses": ["Biologie et Sciences de la Vie"]
+#     }]
+# elif data_type == 'courses':
+#     return [{
+#         "title": "Biologie et Sciences de la Vie",
+#         "description": "Cours couvrant les principes fondamentaux de la biologie, la microbiologie, la génétique, et l'analyse cellulaire",
+#         "category": "Biologie",
+#         "instructor": "Dr. Amina Tchoumbou",
+#         "duration": "6 mois",
+#         "prerequisites": ["Baccalauréat scientifique"],
+#         "skills_gained": ["Techniques de culture cellulaire", "Analyse microbiologique", "Observation microscopique", "Identification de micro-organismes"],
+#         "related_careers": ["Biologiste", "Technicien de laboratoire", "Chercheur en biologie"],
+#         "students_enrolled_count": 250,
+#         "average_rating": 4.7,
+#         "status": "active"
+#     }]
+# elif data_type == 'careers':
+#     return [{
+#         "title": "Biologiste",
+#         "description": "Professionnel spécialisé dans l’étude des organismes vivants, des cellules et des micro-organismes",
+#         "industry": "Biologie et Santé",
+#         "market_demand": "Élevée",
+#         "growth_rate": 12,
+#         "average_salary": 1500000,
+#         "job_openings_estimate": "High",
+#         "required_skills": ["Analyse biologique", "Techniques de laboratoire", "Observation microscopique", "Manipulation de cultures cellulaires"],
+#         "educational_paths": ["Licence en Biologie", "Master en Biologie", "Doctorat en Sciences de la Vie"],
+#         "industry_partners": ["Institut Pasteur", "IRD", "CNRS", "Université de Yaoundé I"]
+#     }]
