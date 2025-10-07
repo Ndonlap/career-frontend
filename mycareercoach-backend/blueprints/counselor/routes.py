@@ -444,7 +444,6 @@ def update_appointment_status(appointment_id):
     error = check_counselor_role()
     if error: return error
 
-    current_user_identity = get_jwt_identity()
     current_user_identity_str = get_jwt_identity()
     current_user_identity = json.loads(current_user_identity_str)
     counselor_id = current_user_identity['id']
@@ -455,16 +454,91 @@ def update_appointment_status(appointment_id):
         return jsonify({"msg": "Invalid status provided"}), 400
 
     try:
+        # First, get the current appointment details to send appropriate email
+        appointment = mongo.db.appointments.find_one({"_id": ObjectId(appointment_id)})
+        if not appointment:
+            return jsonify({"msg": "Appointment not found"}), 404
+        
+        # Get student details for email
+        student = mongo.db.users.find_one({"_id": ObjectId(appointment['student_id'])})
+        if not student:
+            return jsonify({"msg": "Student not found"}), 404
+
+        # Update the appointment status
         result = mongo.db.appointments.update_one(
             {"_id": ObjectId(appointment_id), "counselor_id": ObjectId(counselor_id)},
             {"$set": {"status": new_status, "updated_at": datetime.utcnow()}}
         )
+        
         if result.matched_count == 0:
             return jsonify({"msg": "Appointment not found or not assigned to this counselor"}), 404
+        
+        # Send email notification based on the new status
+        send_appointment_status_email(student, appointment, new_status, counselor_id)
+        
         return jsonify({"msg": "Appointment status updated successfully"}), 200
     except Exception as e:
         return jsonify({"msg": f"Error updating appointment status: {str(e)}"}), 500
 
+
+def send_appointment_status_email(student, appointment, new_status, counselor_id):
+    """
+    Send email notification to student about appointment status change
+    """
+    try:
+        # Get counselor details for the email
+        counselor = mongo.db.users.find_one({"_id": ObjectId(counselor_id)})
+        counselor_name = f"{counselor.get('first_name', '')} {counselor.get('last_name', '')}".strip()
+        
+        student_email = student.get('email')
+        student_name = f"{student.get('first_name', '')} {student.get('last_name', '')}".strip()
+        
+        # Format appointment date for email
+        appointment_date = appointment.get('appointment_date')
+        if appointment_date:
+            if isinstance(appointment_date, str):
+                formatted_date = appointment_date
+            else:
+                formatted_date = appointment_date.strftime("%B %d, %Y at %I:%M %p")
+        else:
+            formatted_date = "To be scheduled"
+        
+        subject = f"Appointment Status Update: {new_status.title()}"
+        
+        # Generate appropriate HTML content based on status
+        if new_status == "confirmed":
+            html_content = html_content_appointment_confirmed(
+                student_name, 
+                counselor_name, 
+                formatted_date,
+                appointment.get('meeting_link', '#')
+            )
+        elif new_status == "cancelled":
+            html_content = html_content_appointment_cancelled(
+                student_name, 
+                counselor_name, 
+                formatted_date
+            )
+        elif new_status == "completed":
+            html_content = html_content_appointment_completed(
+                student_name, 
+                counselor_name, 
+                formatted_date
+            )
+        else:  # pending
+            html_content = html_content_appointment_pending(
+                student_name, 
+                counselor_name, 
+                formatted_date
+            )
+        
+        # Send email
+        send_html_email([student_email], subject, html_content)
+        print(f"Appointment status email sent to {student_email} for status: {new_status}")
+        
+    except Exception as e:
+        print(f"Failed to send appointment status email: {str(e)}")
+        
 @counselor_bp.route('/students/confirmed', methods=['GET'])
 @jwt_required()
 def get_confirmed_students():
