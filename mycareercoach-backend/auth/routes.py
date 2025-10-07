@@ -6,12 +6,15 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from datetime import datetime
 from extensions import mongo 
 import json
+from services.mail_service import *
+from services.html_mail_design import *
+
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    role = data.get('role', 'student') # Default to student
+    role = data.get('role', 'student')  # Default to student
     first_name = data.get('first_name')
     last_name = data.get('last_name')
 
@@ -35,9 +38,32 @@ def register():
         )
         user_id = new_user.save()
         
+        # Send account creation email
+        send_account_creation_email(email, password, first_name)
+        
         return jsonify({"msg": "User registered successfully", "user_id": str(user_id)}), 201
     except Exception as e:
         return jsonify({"msg": f"Error registering user: {str(e)}"}), 500
+
+
+def send_account_creation_email(email: str, password: str, first_name: str):
+    """
+    Send account creation email to new user
+    """
+    try:
+        subject = "Welcome to Our Platform - Your Account Has Been Created"
+        html_content = html_content_account_creation(password, first_name)
+        
+        # Send email (non-blocking - we don't want to block the registration if email fails)
+        send_html_email([email], subject, html_content)
+        
+        # Log successful email sending
+        print(f"Account creation email sent to {email}")
+        
+    except Exception as e:
+        # Log email error but don't fail the registration
+        print(f"Failed to send account creation email to {email}: {str(e)}")
+
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
