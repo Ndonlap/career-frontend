@@ -24,6 +24,8 @@ def send_html_email(recipient_list, subject, html_content):
     msg['Subject'] = subject
     part1 = MIMEText(html_content, 'html')
     msg.attach(part1)
+    print(os.getenv("EMAIL_FROM"))
+    print(os.getenv("EMAIL_PASSWORD"))
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(os.getenv("EMAIL_FROM"), os.getenv(
             "EMAIL_PASSWORD"))

@@ -15,6 +15,9 @@ from auth.models import User
 from blueprints.shared.models import AcademicRecord, Appointment, Recommendation, Course, Career, Skill
 from blueprints.assessments.models import Assessment, AssessmentResult
 from blueprints.public_content.models import PublicContent # For services/resources on landing
+from services.mail_service import send_html_email
+from services.html_mail_design  import html_content_student_booking_confirmation,html_content_counselor_booking_notification
+
 
 # --- Helper Functions (can be moved to a services/student_service.py later) ---
 
@@ -468,6 +471,11 @@ def book_counseling_session():
         if existing_appointment:
             return jsonify({"msg": "Counselor is not available at this time"}), 409
 
+        # Get student details for email
+        student = User.find_by_id(student_id)
+        if not student:
+            return jsonify({"msg": "Student not found"}), 404
+
         # Create and save appointment - use datetime object
         new_appointment = Appointment(
             student_id=student_id,
@@ -483,6 +491,9 @@ def book_counseling_session():
         
         appointment_id = new_appointment.save()
         
+        # Send booking confirmation emails to both student and counselor
+        send_booking_confirmation_emails(student, counselor, new_appointment, appointment_id)
+        
         return jsonify({
             "msg": "Counseling session booked successfully",
             "appointment_id": str(appointment_id),
@@ -494,6 +505,56 @@ def book_counseling_session():
     except Exception as e:
         print(f"Error booking session: {str(e)}")
         return jsonify({"msg": "Internal server error"}), 500
+
+
+def send_booking_confirmation_emails(student, counselor, appointment, appointment_id):
+    """
+    Send booking confirmation emails to both student and counselor
+    """
+    try:
+        # Format appointment date for display
+        appointment_date = appointment.date
+        if isinstance(appointment_date, str):
+            formatted_date = appointment_date
+        else:
+            formatted_date = appointment_date.strftime("%B %d, %Y")
+        
+        # Student email
+        student_subject = "Appointment Booking Confirmation - Pending"
+        student_html_content = html_content_student_booking_confirmation(
+            student_name=f"{student.first_name} {student.last_name}",
+            counselor_name=f"{counselor.first_name} {counselor.last_name}",
+            appointment_date=formatted_date,
+            appointment_time=appointment.time,
+            duration=appointment.duration_minutes,
+            appointment_type=appointment.type,
+            notes=appointment.notes_by_student,
+            appointment_id=appointment_id
+        )
+        
+        # Counselor email
+        counselor_subject = f"New Appointment Request - {student.first_name} {student.last_name}"
+        counselor_html_content = html_content_counselor_booking_notification(
+            counselor_name=f"{counselor.first_name} {counselor.last_name}",
+            student_name=f"{student.first_name} {student.last_name}",
+            student_email=student.email,
+            appointment_date=formatted_date,
+            appointment_time=appointment.time,
+            duration=appointment.duration_minutes,
+            appointment_type=appointment.type,
+            notes=appointment.notes_by_student,
+            appointment_id=appointment_id
+        )
+        
+        # Send emails (non-blocking)
+        send_html_email([student.email], student_subject, student_html_content)
+        send_html_email([counselor.email], counselor_subject, counselor_html_content)
+        
+        print(f"Booking confirmation emails sent to student {student.email} and counselor {counselor.email}")
+        
+    except Exception as e:
+        print(f"Failed to send booking confirmation emails: {str(e)}")
+    
 @student_bp.route('/my_bookings', methods=['GET'])
 @jwt_required()
 def get_student_bookings():

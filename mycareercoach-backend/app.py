@@ -4,6 +4,7 @@ from extensions import init_extensions
 
 # Import Blueprints
 from auth import auth_bp
+from auth.routes import send_account_creation_email
 from blueprints.student import student_bp
 from blueprints.counselor import counselor_bp
 from blueprints.admin import admin_bp
@@ -29,6 +30,7 @@ def create_app():
 
     @app.route('/')
     def index():
+        # send_account_creation_email('kamsonganderson39@gmail.com',"Ander123","Anderson")
         return "MyCareerCoach Backend is running!"
 
     return app

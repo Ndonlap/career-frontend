@@ -13,7 +13,9 @@ from auth.models import User
 from blueprints.shared.models import AcademicRecord, Course, Career, Skill, Appointment, Recommendation
 from blueprints.assessments.models import Assessment, AssessmentResult
 from blueprints.public_content.models import PublicContent, SystemSettings
-
+from auth.routes import send_account_creation_email
+from services.mail_service import send_html_email
+from services.html_mail_design  import html_content_account_suspended,html_content_account_reactivated
 
 # --- Helper Functions for Authorization ---
 def check_admin_role():
@@ -217,6 +219,7 @@ def create_new_user():
             **user_data
         )
         user_id = new_user.save()
+        send_account_creation_email(email, password, first_name)
         return jsonify({"msg": "User created successfully", "user_id": str(user_id)}), 201
     except Exception as e:
         current_app.logger.error(f"Error creating user: {e}")
@@ -326,13 +329,24 @@ def suspend_user(user_id):
         return error
 
     try:
+        # First, get the user details to send email notification
+        user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return jsonify({"msg": "User not found"}), 404
+        
+        # Update user status
         result = mongo.db.users.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": {"status": "suspended", "updated_at": datetime.utcnow()}}
         )
+        
         print(result)
         if result.matched_count == 0:
             return jsonify({"msg": "User not found"}), 404
+        
+        # Send suspension email notification
+        send_account_suspended_email(user)
+        
         return jsonify({"msg": "User suspended successfully"}), 200
     except Exception as e:
         current_app.logger.error(f"Error suspending user: {e}")
@@ -345,16 +359,63 @@ def reactivate_user(user_id):
     if error: return error
 
     try:
+        # First, get the user details to send email notification
+        user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+        if not user:
+            return jsonify({"msg": "User not found"}), 404
+        
+        # Update user status
         result = mongo.db.users.update_one(
             {"_id": ObjectId(user_id)},
             {"$set": {"status": "active", "updated_at": datetime.utcnow()}}
         )
+        
         if result.matched_count == 0:
             return jsonify({"msg": "User not found"}), 404
+        
+        # Send reactivation email notification
+        send_account_reactivated_email(user)
+        
         return jsonify({"msg": "User reactivated successfully"}), 200
     except Exception as e:
         current_app.logger.error(f"Error reactivating user: {e}")
         return jsonify({"msg": f"Error reactivating user: {str(e)}"}), 500
+
+def send_account_suspended_email(user):
+    """
+    Send email notification when user account is suspended
+    """
+    try:
+        user_email = user.get('email')
+        user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+        user_role = user.get('role', 'user')
+        
+        subject = "Account Suspension Notice"
+        html_content = html_content_account_suspended(user_name, user_role)
+        
+        send_html_email([user_email], subject, html_content)
+        print(f"Account suspension email sent to {user_email}")
+        
+    except Exception as e:
+        print(f"Failed to send account suspension email: {str(e)}")
+
+def send_account_reactivated_email(user):
+    """
+    Send email notification when user account is reactivated
+    """
+    try:
+        user_email = user.get('email')
+        user_name = f"{user.get('first_name', '')} {user.get('last_name', '')}".strip()
+        user_role = user.get('role', 'user')
+        
+        subject = "Account Reactivated - Welcome Back!"
+        html_content = html_content_account_reactivated(user_name, user_role)
+        
+        send_html_email([user_email], subject, html_content)
+        print(f"Account reactivation email sent to {user_email}")
+        
+    except Exception as e:
+        print(f"Failed to send account reactivation email: {str(e)}")
 
 @admin_bp.route('/user_stats', methods=['GET'])
 @jwt_required()
