@@ -16,7 +16,7 @@ class RecommendationService:
         print(f"🔍 Starting AI recommendation analysis for student {student_id}...")
         
         # Simulate AI processing time (30 seconds)
-        # self.simulator.simulate_ai_processing()
+        self.simulator.simulate_ai_processing()
         
         # Get student data including assessment results
         student_data = self.get_student_data(student_id)
