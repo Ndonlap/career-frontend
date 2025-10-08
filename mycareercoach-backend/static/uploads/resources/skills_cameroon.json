@@ -1,42 +1,366 @@
-// [
-//   {
-//     "name": "Analyse biologique",
-//     "description": "Techniques de laboratoire pour l’étude des cellules, tissus et micro-organismes",
-//     "category": "Biologie",
-//     "related_courses": [
-//       "Biologie et Sciences de la Vie"
-//     ]
-//   },
-//   {
-//     "name": "Chimie analytique",
-//     "description": "Méthodes pour analyser la composition des substances chimiques",
-//     "category": "Chimie",
-//     "related_courses": [
-//       "Chimie Générale et Appliquée"
-//     ]
-//   },
-//   {
-//     "name": "Modélisation physique",
-//     "description": "Application des lois de la physique à la modélisation de phénomènes naturels et techniques",
-//     "category": "Physique",
-//     "related_courses": [
-//       "Physique Fondamentale et Appliquée"
-//     ]
-//   },
-//   {
-//     "name": "Analyse statistique",
-//     "description": "Utilisation des mathématiques pour traiter et interpréter des données complexes",
-//     "category": "Mathématiques",
-//     "related_courses": [
-//       "Mathématiques Avancées et Statistiques"
-//     ]
-//   },
-//   {
-//     "name": "Développement web fullstack",
-//     "description": "Conception et programmation d’applications web complètes côté client et serveur",
-//     "category": "Informatique",
-//     "related_courses": [
-//       "Informatique et Développement Logiciel"
-//     ]
-//   }
-// ]
+[
+  {
+    "name": "Biological Analysis",
+    "description": "Laboratory techniques for the study of cells, tissues, and microorganisms",
+    "category": "Biology",
+    "related_courses": [
+      "Biology and Life Sciences"
+    ],
+    "related_careers": [
+      "Specialized Nurse",
+      "Ecotourism Expert"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Analytical Chemistry",
+    "description": "Methods for analyzing the composition of chemical substances",
+    "category": "Chemistry",
+    "related_courses": [
+      "General and Applied Chemistry"
+    ],
+    "related_careers": [
+      "Agronomist Engineer",
+      "Renewable Energy Technician"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Physical Modeling",
+    "description": "Application of physics laws to model natural and technical phenomena",
+    "category": "Physics",
+    "related_courses": [
+      "Fundamental and Applied Physics"
+    ],
+    "related_careers": [
+      "Telecommunications Engineer",
+      "Civil Engineer"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Statistical Analysis",
+    "description": "Using mathematics to process and interpret complex data",
+    "category": "Mathematics",
+    "related_courses": [
+      "Advanced Mathematics and Statistics"
+    ],
+    "related_careers": [
+      "Financial Analyst",
+      "Software Architect",
+      "Mining Project Manager"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Fullstack Web Development",
+    "description": "Design and programming of complete web applications on client and server sides",
+    "category": "Computer Science",
+    "related_courses": [
+      "Computer Science and Software Development"
+    ],
+    "related_careers": [
+      "Software Developer",
+      "Software Architect",
+      "Digital Marketing Specialist"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Agronomy",
+    "description": "Science and techniques of agricultural production in tropical climates",
+    "category": "Agriculture",
+    "related_courses": [
+      "Tropical Agronomy",
+      "Soil Sciences"
+    ],
+    "related_careers": [
+      "Agronomist Engineer",
+      "Agri-Food Processing Entrepreneur"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Project Management",
+    "description": "Planning, execution, and control of projects in various fields",
+    "category": "Management",
+    "related_courses": [
+      "Project Management",
+      "Business Administration"
+    ],
+    "related_careers": [
+      "Agronomist Engineer",
+      "Mining Project Manager",
+      "Telecommunications Engineer"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Python Programming",
+    "description": "Application development using the Python language",
+    "category": "Computer Science",
+    "related_courses": [
+      "Advanced Programming",
+      "Artificial Intelligence"
+    ],
+    "related_careers": [
+      "Software Developer",
+      "Software Architect",
+      "Financial Analyst"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "French-English Bilingualism",
+    "description": "Professional mastery of French and English",
+    "category": "Languages",
+    "related_courses": [
+      "Translation and Interpretation",
+      "Bilingual Communication"
+    ],
+    "related_careers": [
+      "Bilingual Journalist",
+      "International Trade Expert",
+      "Secondary School Teacher"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Patient Care",
+    "description": "Techniques for patient care and medical assistance",
+    "category": "Health",
+    "related_courses": [
+      "Nursing Sciences",
+      "Primary Health Care"
+    ],
+    "related_careers": [
+      "Specialized Nurse"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Pedagogy",
+    "description": "Teaching and learning methods and techniques",
+    "category": "Education",
+    "related_courses": [
+      "Education Sciences",
+      "Subject Didactics"
+    ],
+    "related_careers": [
+      "Secondary School Teacher"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Mobile Networks",
+    "description": "Design and management of mobile phone networks",
+    "category": "Telecommunications",
+    "related_courses": [
+      "Networks and Telecommunications",
+      "Network Engineering"
+    ],
+    "related_careers": [
+      "Telecommunications Engineer"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Ecotourism",
+    "description": "Development of environmentally respectful tourism",
+    "category": "Tourism",
+    "related_courses": [
+      "Tourism Management",
+      "Sustainable Development"
+    ],
+    "related_careers": [
+      "Ecotourism Expert"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Financial Analysis",
+    "description": "Evaluation of company financial performance and risks",
+    "category": "Finance",
+    "related_courses": [
+      "Financial Analysis",
+      "Financial Management"
+    ],
+    "related_careers": [
+      "Financial Analyst"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Solar Systems",
+    "description": "Installation and maintenance of solar panels and photovoltaic systems",
+    "category": "Energy",
+    "related_courses": [
+      "Renewable Energies",
+      "Solar Technologies"
+    ],
+    "related_careers": [
+      "Renewable Energy Technician"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Journalism",
+    "description": "Reporting, investigation, and media communication techniques",
+    "category": "Media",
+    "related_courses": [
+      "Journalism and Communication",
+      "Audiovisual Production"
+    ],
+    "related_careers": [
+      "Bilingual Journalist"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Geology",
+    "description": "Study of soils, rocks, and mining resources",
+    "category": "Geosciences",
+    "related_courses": [
+      "Applied Geology",
+      "Earth Sciences"
+    ],
+    "related_careers": [
+      "Mining Project Manager"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Entrepreneurship",
+    "description": "Creation and management of innovative businesses",
+    "category": "Business",
+    "related_courses": [
+      "Entrepreneurship and Innovation",
+      "Business Management"
+    ],
+    "related_careers": [
+      "Agri-Food Processing Entrepreneur",
+      "Digital Marketing Specialist"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Software Architecture",
+    "description": "Design of software system structures and patterns",
+    "category": "Computer Science",
+    "related_courses": [
+      "System Architecture",
+      "Software Design"
+    ],
+    "related_careers": [
+      "Software Architect"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Digital Marketing",
+    "description": "Online promotion strategies and social media management",
+    "category": "Marketing",
+    "related_courses": [
+      "Digital Marketing",
+      "Online Strategies"
+    ],
+    "related_careers": [
+      "Digital Marketing Specialist",
+      "Agri-Food Processing Entrepreneur"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Structural Calculation",
+    "description": "Sizing and verification of construction structures",
+    "category": "Civil Engineering",
+    "related_courses": [
+      "Structural Mechanics",
+      "Strength of Materials"
+    ],
+    "related_careers": [
+      "Civil Engineer"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Customs and Logistics",
+    "description": "Customs procedures and supply chain management",
+    "category": "Commerce",
+    "related_courses": [
+      "International Trade",
+      "Logistics and Transport"
+    ],
+    "related_careers": [
+      "International Trade Expert"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Construction Site Management",
+    "description": "Organization and supervision of construction work",
+    "category": "Construction",
+    "related_courses": [
+      "Construction Site Management",
+      "Construction Techniques"
+    ],
+    "related_careers": [
+      "Civil Engineer",
+      "Mining Project Manager"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Computer Security",
+    "description": "Protection of systems and data against cyber threats",
+    "category": "Computer Science",
+    "related_courses": [
+      "Cybersecurity",
+      "Network Security"
+    ],
+    "related_careers": [
+      "Software Architect",
+      "Software Developer"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Food Processing",
+    "description": "Agricultural product conservation and transformation techniques",
+    "category": "Agro-industry",
+    "related_courses": [
+      "Food Technologies",
+      "Product Processing"
+    ],
+    "related_careers": [
+      "Agri-Food Processing Entrepreneur",
+      "Agronomist Engineer"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  }
+]

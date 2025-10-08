@@ -1,71 +1,414 @@
 [
   {
-    "title": "Ingénieur Agronome",
-    "description": "Spécialiste de l'agriculture et de l'élevage au Cameroun",
+    "title": "Agronomist Engineer",
+    "description": "Specialist in agriculture and livestock in Cameroon",
     "industry": "Agriculture",
-    "market_demand": "Élevée",
+    "market_demand": "High",
     "growth_rate": 15,
     "average_salary": 1800000,
     "job_openings_estimate": "High",
     "required_skills": [
-      "Agronomie",
-      "Gestion de projet",
-      "Connaissances sols tropicaux"
+      "Agronomy",
+      "Project Management",
+      "Knowledge of Tropical Soils",
+      "Irrigation",
+      "Crop Protection"
     ],
     "educational_paths": [
-      "Master en Agronomie",
-      "Ingénieur agricole"
+      "Master's in Agronomy",
+      "Agricultural Engineer",
+      "University of Dschang"
     ],
     "industry_partners": [
       "IRAD",
       "MINADER",
       "SODECOTON"
-    ]
+    ],
+    "regions": ["West", "Littoral", "North"],
+    "experience_level": "Intermediate"
   },
   {
-    "title": "Développeur Logiciel",
-    "description": "Création d'applications et solutions digitales pour le marché camerounais",
-    "industry": "Technologie",
-    "market_demand": "Très élevée",
+    "title": "Software Developer",
+    "description": "Creating applications and digital solutions for the Cameroonian market",
+    "industry": "Technology",
+    "market_demand": "Very High",
     "growth_rate": 25,
     "average_salary": 2500000,
     "job_openings_estimate": "Very High",
     "required_skills": [
-      "Programmation",
-      "Base de données",
-      "Développement mobile"
+      "Programming",
+      "Databases",
+      "Mobile Development",
+      "JavaScript",
+      "Python"
     ],
     "educational_paths": [
-      "Licence en informatique",
-      "École d'ingénieur"
+      "Bachelor's in Computer Science",
+      "Engineering School",
+      "University of Buea"
     ],
     "industry_partners": [
-      "Orange Cameroun",
+      "Orange Cameroon",
       "MTN Cameroon",
-      "Startups locales"
-    ]
+      "Local Startups",
+      "NextTel"
+    ],
+    "regions": ["Littoral", "Centre", "South-West"],
+    "experience_level": "Entry"
   },
   {
-    "title": "Expert en Commerce International",
-    "description": "Spécialiste des échanges commerciaux avec les pays de la CEMAC",
+    "title": "International Trade Expert",
+    "description": "Specialist in trade exchanges with CEMAC countries",
     "industry": "Commerce",
-    "market_demand": "Moyenne",
+    "market_demand": "Medium",
     "growth_rate": 12,
     "average_salary": 2200000,
     "job_openings_estimate": "Medium",
     "required_skills": [
-      "Douanes",
-      "Logistique",
-      "Négociation"
+      "Customs",
+      "Logistics",
+      "Negotiation",
+      "English/French",
+      "Commercial Law"
     ],
     "educational_paths": [
-      "Master en commerce international",
-      "École de commerce"
+      "Master's in International Trade",
+      "Business School",
+      "University of Douala"
     ],
     "industry_partners": [
-      "Douanes camerounaises",
-      "Chambre de commerce",
-      "Entreprises exportatrices"
-    ]
+      "Cameroon Customs",
+      "Chamber of Commerce",
+      "Exporting Companies"
+    ],
+    "regions": ["Littoral", "Centre"],
+    "experience_level": "Intermediate"
+  },
+  {
+    "title": "Specialized Nurse",
+    "description": "Healthcare in Cameroonian hospitals and health centers",
+    "industry": "Health",
+    "market_demand": "High",
+    "growth_rate": 18,
+    "average_salary": 1200000,
+    "job_openings_estimate": "High",
+    "required_skills": [
+      "Patient Care",
+      "Medical Emergencies",
+      "Hospital Hygiene",
+      "Maternity",
+      "Pediatrics"
+    ],
+    "educational_paths": [
+      "Health Sciences School",
+      "Nursing Training",
+      "University of Yaoundé I"
+    ],
+    "industry_partners": [
+      "Ministry of Health",
+      "Public Hospitals",
+      "Private Clinics"
+    ],
+    "regions": ["All Regions"],
+    "experience_level": "Entry"
+  },
+  {
+    "title": "Secondary School Teacher",
+    "description": "Teaching in Cameroonian high schools and colleges",
+    "industry": "Education",
+    "market_demand": "High",
+    "growth_rate": 10,
+    "average_salary": 900000,
+    "job_openings_estimate": "High",
+    "required_skills": [
+      "Pedagogy",
+      "Communication",
+      "Classroom Management",
+      "Bilingualism",
+      "Educational Computing"
+    ],
+    "educational_paths": [
+      "Bachelor's in Education",
+      "ENS (Higher Teacher Training College)",
+      "DIPES II"
+    ],
+    "industry_partners": [
+      "MINESEC",
+      "MINEDUB",
+      "Educational Institutions"
+    ],
+    "regions": ["All Regions"],
+    "experience_level": "Entry"
+  },
+  {
+    "title": "Telecommunications Engineer",
+    "description": "Management of telecommunications networks and infrastructure",
+    "industry": "Telecommunications",
+    "market_demand": "High",
+    "growth_rate": 20,
+    "average_salary": 2800000,
+    "job_openings_estimate": "High",
+    "required_skills": [
+      "Mobile Networks",
+      "Optical Fiber",
+      "Electronics",
+      "IT Project Management"
+    ],
+    "educational_paths": [
+      "Telecommunications Engineer",
+      "Master's in Networks",
+      "University of Douala"
+    ],
+    "industry_partners": [
+      "Camtel",
+      "Orange",
+      "MTN",
+      "Viettel"
+    ],
+    "regions": ["Littoral", "Centre", "West"],
+    "experience_level": "Intermediate"
+  },
+  {
+    "title": "Ecotourism Expert",
+    "description": "Development of sustainable tourism in Cameroonian national parks",
+    "industry": "Tourism",
+    "market_demand": "Medium",
+    "growth_rate": 14,
+    "average_salary": 1500000,
+    "job_openings_estimate": "Medium",
+    "required_skills": [
+      "Tourism Management",
+      "Ecotourism",
+      "Foreign Languages",
+      "Local Culture"
+    ],
+    "educational_paths": [
+      "Bachelor's in Tourism",
+      "Ecotourism Training",
+      "Institute of Fine Arts"
+    ],
+    "industry_partners": [
+      "MINTOUL",
+      "Hotels",
+      "Travel Agencies"
+    ],
+    "regions": ["South-West", "Far North", "East"],
+    "experience_level": "Intermediate"
+  },
+  {
+    "title": "Financial Analyst",
+    "description": "Analysis of financial markets and investment advice",
+    "industry": "Finance",
+    "market_demand": "Medium",
+    "growth_rate": 16,
+    "average_salary": 2300000,
+    "job_openings_estimate": "Medium",
+    "required_skills": [
+      "Financial Analysis",
+      "Advanced Excel",
+      "Accounting",
+      "Economics"
+    ],
+    "educational_paths": [
+      "Master's in Finance",
+      "Business School",
+      "University of Yaoundé II"
+    ],
+    "industry_partners": [
+      "Commercial Banks",
+      "Microfinance Companies",
+      "Crénefi"
+    ],
+    "regions": ["Littoral", "Centre"],
+    "experience_level": "Intermediate"
+  },
+  {
+    "title": "Renewable Energy Technician",
+    "description": "Installation and maintenance of solar and biogas systems",
+    "industry": "Energy",
+    "market_demand": "Very High",
+    "growth_rate": 30,
+    "average_salary": 1400000,
+    "job_openings_estimate": "Very High",
+    "required_skills": [
+      "Solar Systems",
+      "Electricity",
+      "Maintenance",
+      "Electrical Safety"
+    ],
+    "educational_paths": [
+      "BTS in Renewable Energies",
+      "Technical Training",
+      "Vocational School"
+    ],
+    "industry_partners": [
+      "ENEO",
+      "Solar Installation Companies",
+      "Government Projects"
+    ],
+    "regions": ["All Regions"],
+    "experience_level": "Entry"
+  },
+  {
+    "title": "Bilingual Journalist",
+    "description": "Reporting and communication in French and English for local media",
+    "industry": "Media",
+    "market_demand": "Medium",
+    "growth_rate": 8,
+    "average_salary": 1100000,
+    "job_openings_estimate": "Medium",
+    "required_skills": [
+      "Journalism",
+      "Perfect Bilingualism",
+      "Communication",
+      "Audiovisual Production"
+    ],
+    "educational_paths": [
+      "Journalism School",
+      "University of Yaoundé II",
+      "ESSTIC"
+    ],
+    "industry_partners": [
+      "CRTV",
+      "Canal 2",
+      "Local Newspapers"
+    ],
+    "regions": ["Centre", "Littoral", "South-West"],
+    "experience_level": "Entry"
+  },
+  {
+    "title": "Mining Project Manager",
+    "description": "Supervision of mining operations in resource-rich regions",
+    "industry": "Mining",
+    "market_demand": "High",
+    "growth_rate": 22,
+    "average_salary": 3500000,
+    "job_openings_estimate": "High",
+    "required_skills": [
+      "Project Management",
+      "Geology",
+      "Mining Safety",
+      "Environment"
+    ],
+    "educational_paths": [
+      "Mining Engineer",
+      "Master's in Mining Management",
+      "Mining School"
+    ],
+    "industry_partners": [
+      "MINMIDT",
+      "Mining Companies",
+      "CIMENCAM"
+    ],
+    "regions": ["East", "Adamawa", "North"],
+    "experience_level": "Senior"
+  },
+  {
+    "title": "Agri-Food Processing Entrepreneur",
+    "description": "Creating local agricultural product processing units",
+    "industry": "Agro-industry",
+    "market_demand": "Very High",
+    "growth_rate": 28,
+    "average_salary": 2000000,
+    "job_openings_estimate": "Very High",
+    "required_skills": [
+      "Entrepreneurship",
+      "Food Processing",
+      "Business Management",
+      "Marketing"
+    ],
+    "educational_paths": [
+      "Entrepreneurship Training",
+      "Business School",
+      "PEA-Jeunes Programs"
+    ],
+    "industry_partners": [
+      "PEA-Jeunes",
+      "MINPMEESA",
+      "Chamber of Agriculture"
+    ],
+    "regions": ["All Regions"],
+    "experience_level": "Intermediate"
+  },
+  {
+    "title": "Software Architect",
+    "description": "Designing software architectures for Cameroonian companies",
+    "industry": "Technology",
+    "market_demand": "High",
+    "growth_rate": 20,
+    "average_salary": 3800000,
+    "job_openings_estimate": "High",
+    "required_skills": [
+      "Software Architecture",
+      "Cloud Computing",
+      "IT Security",
+      "DevOps"
+    ],
+    "educational_paths": [
+      "Master's in Computer Science",
+      "Engineering School",
+      "Specialized Certifications"
+    ],
+    "industry_partners": [
+      "Large Companies",
+      "Banks",
+      "Consulting Firms"
+    ],
+    "regions": ["Littoral", "Centre"],
+    "experience_level": "Senior"
+  },
+  {
+    "title": "Digital Marketing Specialist",
+    "description": "Digital strategies for Cameroonian companies",
+    "industry": "Marketing",
+    "market_demand": "High",
+    "growth_rate": 18,
+    "average_salary": 1600000,
+    "job_openings_estimate": "High",
+    "required_skills": [
+      "Social Media",
+      "SEO",
+      "Data Analysis",
+      "Marketing Strategy"
+    ],
+    "educational_paths": [
+      "Master's in Marketing",
+      "Digital Training",
+      "Business School"
+    ],
+    "industry_partners": [
+      "Advertising Agencies",
+      "Major Brands",
+      "Startups"
+    ],
+    "regions": ["Littoral", "Centre"],
+    "experience_level": "Intermediate"
+  },
+  {
+    "title": "Civil Engineer",
+    "description": "Construction of road infrastructure and buildings",
+    "industry": "Construction",
+    "market_demand": "High",
+    "growth_rate": 15,
+    "average_salary": 2200000,
+    "job_openings_estimate": "High",
+    "required_skills": [
+      "Structural Calculation",
+      "Technical Drawing",
+      "Site Management",
+      "Construction Standards"
+    ],
+    "educational_paths": [
+      "Civil Engineering Degree",
+      "Master's in Construction",
+      "Polytechnic School"
+    ],
+    "industry_partners": [
+      "Construction Companies",
+      "MINHDU",
+      "Real Estate Companies"
+    ],
+    "regions": ["All Regions"],
+    "experience_level": "Intermediate"
   }
 ]

@@ -1,117 +1,621 @@
-// [
-//   {
-//     "title": "Biologie Avancée",
-//     "description": "Étude approfondie de la biologie cellulaire, de la génétique et de l’écologie avec applications pratiques.",
-//     "category": "Biologie",
-//     "instructor": "Dr. Alice Nkou",
-//     "duration": "6 mois",
-//     "prerequisites": [
-//       "Baccalauréat scientifique"
-//     ],
-//     "skills_gained": [
-//       "Analyse cellulaire",
-//       "Techniques de laboratoire",
-//       "Compréhension des écosystèmes"
-//     ],
-//     "related_careers": [
-//       "Biologiste",
-//       "Chercheur en sciences de la vie",
-//       "Technicien de laboratoire"
-//     ],
-//     "students_enrolled_count": 310,
-//     "average_rating": 4.6,
-//     "status": "active"
-//   },
-//   {
-//     "title": "Chimie Organique et Industrielle",
-//     "description": "Formation sur les réactions organiques, la chimie des matériaux et les procédés chimiques industriels.",
-//     "category": "Chimie",
-//     "instructor": "Pr. Jules Tchoumi",
-//     "duration": "7 mois",
-//     "prerequisites": [
-//       "Baccalauréat scientifique"
-//     ],
-//     "skills_gained": [
-//       "Synthèse organique",
-//       "Analyse chimique",
-//       "Chimie industrielle"
-//     ],
-//     "related_careers": [
-//       "Chimiste",
-//       "Analyste en laboratoire",
-//       "Ingénieur chimiste"
-//     ],
-//     "students_enrolled_count": 275,
-//     "average_rating": 4.4,
-//     "status": "active"
-//   },
-//   {
-//     "title": "Physique Appliquée",
-//     "description": "Approfondissement en mécanique, électromagnétisme et physique moderne avec applications pratiques.",
-//     "category": "Physique",
-//     "instructor": "Dr. Emmanuel Abega",
-//     "duration": "8 mois",
-//     "prerequisites": [
-//       "Baccalauréat scientifique"
-//     ],
-//     "skills_gained": [
-//       "Résolution de problèmes physiques",
-//       "Manipulation d’appareils scientifiques",
-//       "Analyse de phénomènes naturels"
-//     ],
-//     "related_careers": [
-//       "Physicien",
-//       "Ingénieur en instrumentation",
-//       "Enseignant chercheur"
-//     ],
-//     "students_enrolled_count": 290,
-//     "average_rating": 4.5,
-//     "status": "active"
-//   },
-//   {
-//     "title": "Mathématiques Supérieures",
-//     "description": "Cours avancé en algèbre, analyse et probabilités destiné aux étudiants en sciences.",
-//     "category": "Mathématiques",
-//     "instructor": "Pr. Nadine Fouda",
-//     "duration": "9 mois",
-//     "prerequisites": [
-//       "Baccalauréat scientifique"
-//     ],
-//     "skills_gained": [
-//       "Modélisation mathématique",
-//       "Analyse et résolution d’équations complexes",
-//       "Statistiques et probabilités"
-//     ],
-//     "related_careers": [
-//       "Statisticien",
-//       "Actuaire",
-//       "Chercheur en mathématiques"
-//     ],
-//     "students_enrolled_count": 450,
-//     "average_rating": 4.8,
-//     "status": "active"
-//   },
-//   {
-//     "title": "Informatique et Programmation",
-//     "description": "Apprentissage des bases de la programmation, des algorithmes et du développement d’applications.",
-//     "category": "Informatique",
-//     "instructor": "Ing. Roland Nguema",
-//     "duration": "6 mois",
-//     "prerequisites": [
-//       "Baccalauréat scientifique"
-//     ],
-//     "skills_gained": [
-//       "Programmation Python et Java",
-//       "Développement Web",
-//       "Structures de données et algorithmes"
-//     ],
-//     "related_careers": [
-//       "Développeur logiciel",
-//       "Ingénieur en informatique",
-//       "Data scientist"
-//     ],
-//     "students_enrolled_count": 520,
-//     "average_rating": 4.7,
-//     "status": "active"
-//   }
-// ]
+[
+  {
+    "title": "Biologie Avancée",
+    "description": "Étude approfondie de la biologie cellulaire, de la génétique et de l’écologie avec applications pratiques.",
+    "category": "Biologie",
+    "instructor": "Dr. Alice Nkou",
+    "duration": "6 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Analyse biologique",
+      "Techniques de laboratoire",
+      "Compréhension des écosystèmes",
+      "Microbiologie"
+    ],
+    "related_careers": [
+      "Infirmier(ère) Spécialisé(e)",
+      "Expert en Tourisme Écologique",
+      "Chercheur en sciences de la vie"
+    ],
+    "students_enrolled_count": 310,
+    "average_rating": 4.6,
+    "status": "active",
+    "institution": "Université de Yaoundé I",
+    "cost": 150000,
+    "language": "Français",
+    "certification": "Diplôme Universitaire"
+  },
+  {
+    "title": "Chimie Organique et Industrielle",
+    "description": "Formation sur les réactions organiques, la chimie des matériaux et les procédés chimiques industriels.",
+    "category": "Chimie",
+    "instructor": "Pr. Jules Tchoumi",
+    "duration": "7 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Chimie analytique",
+      "Synthèse organique",
+      "Analyse chimique",
+      "Chimie industrielle"
+    ],
+    "related_careers": [
+      "Ingénieur Agronome",
+      "Technicien en Énergies Renouvelables",
+      "Analyste en laboratoire"
+    ],
+    "students_enrolled_count": 275,
+    "average_rating": 4.4,
+    "status": "active",
+    "institution": "Université de Douala",
+    "cost": 175000,
+    "language": "Français",
+    "certification": "Attestation de Formation"
+  },
+  {
+    "title": "Physique Appliquée",
+    "description": "Approfondissement en mécanique, électromagnétisme et physique moderne avec applications pratiques.",
+    "category": "Physique",
+    "instructor": "Dr. Emmanuel Abega",
+    "duration": "8 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Modélisation physique",
+      "Résolution de problèmes physiques",
+      "Manipulation d'appareils scientifiques",
+      "Électronique fondamentale"
+    ],
+    "related_careers": [
+      "Ingénieur en Télécommunications",
+      "Ingénieur en Génie Civil",
+      "Technicien en Énergies Renouvelables"
+    ],
+    "students_enrolled_count": 290,
+    "average_rating": 4.5,
+    "status": "active",
+    "institution": "École Polytechnique de Yaoundé",
+    "cost": 200000,
+    "language": "Français",
+    "certification": "Diplôme d'Ingénieur"
+  },
+  {
+    "title": "Mathématiques Supérieures",
+    "description": "Cours avancé en algèbre, analyse et probabilités destiné aux étudiants en sciences.",
+    "category": "Mathématiques",
+    "instructor": "Pr. Nadine Fouda",
+    "duration": "9 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Analyse statistique",
+      "Modélisation mathématique",
+      "Résolution d'équations complexes",
+      "Statistiques et probabilités"
+    ],
+    "related_careers": [
+      "Analyste Financier",
+      "Architecte Logiciel",
+      "Gestionnaire de Projets Miniers",
+      "Statisticien"
+    ],
+    "students_enrolled_count": 450,
+    "average_rating": 4.8,
+    "status": "active",
+    "institution": "Université de Yaoundé I",
+    "cost": 160000,
+    "language": "Français",
+    "certification": "Diplôme Universitaire"
+  },
+  {
+    "title": "Informatique et Programmation",
+    "description": "Apprentissage des bases de la programmation, des algorithmes et du développement d'applications.",
+    "category": "Informatique",
+    "instructor": "Ing. Roland Nguema",
+    "duration": "6 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Développement web fullstack",
+      "Programmation Python",
+      "Développement Web",
+      "Structures de données et algorithmes"
+    ],
+    "related_careers": [
+      "Développeur Logiciel",
+      "Architecte Logiciel",
+      "Spécialiste en Marketing Digital"
+    ],
+    "students_enrolled_count": 520,
+    "average_rating": 4.7,
+    "status": "active",
+    "institution": "University of Buea",
+    "cost": 220000,
+    "language": "Anglais",
+    "certification": "Professional Certificate"
+  },
+  {
+    "title": "Agronomie Tropicale",
+    "description": "Formation complète en agriculture sous les climats tropicaux du Cameroun.",
+    "category": "Agriculture",
+    "instructor": "Dr. Pierre Mbarga",
+    "duration": "10 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Agronomie",
+      "Gestion de projet agricole",
+      "Connaissances sols tropicaux",
+      "Irrigation et drainage"
+    ],
+    "related_careers": [
+      "Ingénieur Agronome",
+      "Entrepreneur en Transformation Agro-alimentaire"
+    ],
+    "students_enrolled_count": 380,
+    "average_rating": 4.6,
+    "status": "active",
+    "institution": "Université de Dschang",
+    "cost": 180000,
+    "language": "Français",
+    "certification": "Diplôme d'Ingénieur Agronome"
+  },
+  {
+    "title": "Gestion de Projets Professionnelle",
+    "description": "Maîtrise des méthodologies de gestion de projets adaptées au contexte camerounais.",
+    "category": "Management",
+    "instructor": "MBA. Sarah Tchakounté",
+    "duration": "5 mois",
+    "prerequisites": [
+      "Licence ou équivalent"
+    ],
+    "skills_gained": [
+      "Gestion de projet",
+      "Planification stratégique",
+      "Gestion des ressources",
+      "Suivi et évaluation"
+    ],
+    "related_careers": [
+      "Gestionnaire de Projets Miniers",
+      "Ingénieur en Télécommunications",
+      "Entrepreneur en Transformation Agro-alimentaire"
+    ],
+    "students_enrolled_count": 420,
+    "average_rating": 4.5,
+    "status": "active",
+    "institution": "Université de Yaoundé II",
+    "cost": 250000,
+    "language": "Bilingue",
+    "certification": "Certificat en Gestion de Projets"
+  },
+  {
+    "title": "Programmation Python Avancée",
+    "description": "Perfectionnement en Python pour le développement d'applications complexes.",
+    "category": "Informatique",
+    "instructor": "Ing. Marcelle Ngo",
+    "duration": "4 mois",
+    "prerequisites": [
+      "Bases en programmation"
+    ],
+    "skills_gained": [
+      "Programmation Python",
+      "Développement d'APIs",
+      "Analyse de données",
+      "Automatisation de tâches"
+    ],
+    "related_careers": [
+      "Développeur Logiciel",
+      "Architecte Logiciel",
+      "Analyste Financier"
+    ],
+    "students_enrolled_count": 350,
+    "average_rating": 4.7,
+    "status": "active",
+    "institution": "ActivSpaces Academy",
+    "cost": 180000,
+    "language": "Anglais",
+    "certification": "Certificat de Compétence"
+  },
+  {
+    "title": "Communication Bilingue Professionnelle",
+    "description": "Perfectionnement en français et anglais pour le milieu professionnel camerounais.",
+    "category": "Langues",
+    "instructor": "Dr. Jean Bilingue",
+    "duration": "3 mois",
+    "prerequisites": [
+      "Niveau secondaire"
+    ],
+    "skills_gained": [
+      "Bilinguisme français-anglais",
+      "Communication professionnelle",
+      "Rédaction commerciale",
+      "Présentation en public"
+    ],
+    "related_careers": [
+      "Journaliste Bilingue",
+      "Expert en Commerce International",
+      "Enseignant du Secondaire"
+    ],
+    "students_enrolled_count": 280,
+    "average_rating": 4.4,
+    "status": "active",
+    "institution": "Centre Culturel Français",
+    "cost": 120000,
+    "language": "Bilingue",
+    "certification": "Attestation de Bilinguisme"
+  },
+  {
+    "title": "Sciences Infirmières Avancées",
+    "description": "Formation spécialisée en soins de santé pour infirmiers professionnels.",
+    "category": "Santé",
+    "instructor": "Dr. Marie Ngalle",
+    "duration": "8 mois",
+    "prerequisites": [
+      "Diplôme en soins infirmiers"
+    ],
+    "skills_gained": [
+      "Soins patients",
+      "Urgences médicales",
+      "Hygiène hospitalière",
+      "Maternité et pédiatrie"
+    ],
+    "related_careers": [
+      "Infirmier(ère) Spécialisé(e)"
+    ],
+    "students_enrolled_count": 320,
+    "average_rating": 4.6,
+    "status": "active",
+    "institution": "École des Sciences de la Santé",
+    "cost": 190000,
+    "language": "Français",
+    "certification": "Diplôme de Spécialisation"
+  },
+  {
+    "title": "Pédagogie et Didactique Moderne",
+    "description": "Formation aux méthodes d'enseignement contemporaines pour éducateurs.",
+    "category": "Éducation",
+    "instructor": "Pr. Albert Ndi",
+    "duration": "6 mois",
+    "prerequisites": [
+      "Licence en éducation ou équivalent"
+    ],
+    "skills_gained": [
+      "Pédagogie",
+      "Communication éducative",
+      "Gestion de classe",
+      "Évaluation des apprentissages"
+    ],
+    "related_careers": [
+      "Enseignant du Secondaire"
+    ],
+    "students_enrolled_count": 270,
+    "average_rating": 4.3,
+    "status": "active",
+    "institution": "ENS Yaoundé",
+    "cost": 140000,
+    "language": "Français",
+    "certification": "Certificat en Pédagogie"
+  },
+  {
+    "title": "Réseaux et Télécommunications",
+    "description": "Formation technique sur les réseaux mobiles et les infrastructures de télécoms.",
+    "category": "Télécommunications",
+    "instructor": "Ing. Paul Nkodo",
+    "duration": "7 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Réseaux mobiles",
+      "Fibre optique",
+      "Sécurité des réseaux",
+      "Maintenance des infrastructures"
+    ],
+    "related_careers": [
+      "Ingénieur en Télécommunications"
+    ],
+    "students_enrolled_count": 230,
+    "average_rating": 4.5,
+    "status": "active",
+    "institution": "Université de Douala",
+    "cost": 210000,
+    "language": "Français",
+    "certification": "Diplôme Technique"
+  },
+  {
+    "title": "Écotourisme et Développement Durable",
+    "description": "Formation en tourisme écologique adapté aux richesses naturelles du Cameroun.",
+    "category": "Tourisme",
+    "instructor": "Dr. Léa Mballa",
+    "duration": "5 mois",
+    "prerequisites": [
+      "Niveau secondaire"
+    ],
+    "skills_gained": [
+      "Écotourisme",
+      "Gestion touristique",
+      "Développement durable",
+      "Animation culturelle"
+    ],
+    "related_careers": [
+      "Expert en Tourisme Écologique"
+    ],
+    "students_enrolled_count": 180,
+    "average_rating": 4.2,
+    "status": "active",
+    "institution": "Institut des Beaux-Arts",
+    "cost": 130000,
+    "language": "Français",
+    "certification": "Certificat en Écotourisme"
+  },
+  {
+    "title": "Analyse Financière et Comptabilité",
+    "description": "Formation approfondie en analyse financière pour professionnels.",
+    "category": "Finance",
+    "instructor": "Expert Comptable Armand Fossi",
+    "duration": "6 mois",
+    "prerequisites": [
+      "Licence en économie ou gestion"
+    ],
+    "skills_gained": [
+      "Analyse financière",
+      "Excel avancé",
+      "Comptabilité analytique",
+      "Évaluation d'entreprises"
+    ],
+    "related_careers": [
+      "Analyste Financier"
+    ],
+    "students_enrolled_count": 290,
+    "average_rating": 4.6,
+    "status": "active",
+    "institution": "Université de Yaoundé II",
+    "cost": 220000,
+    "language": "Français",
+    "certification": "Certificat en Analyse Financière"
+  },
+  {
+    "title": "Énergies Renouvelables et Solaire",
+    "description": "Formation technique en installation et maintenance de systèmes solaires.",
+    "category": "Énergie",
+    "instructor": "Tech. Samuel Tchinda",
+    "duration": "4 mois",
+    "prerequisites": [
+      "Baccalauréat technique"
+    ],
+    "skills_gained": [
+      "Systèmes solaires",
+      "Électricité photovoltaïque",
+      "Maintenance technique",
+      "Sécurité électrique"
+    ],
+    "related_careers": [
+      "Technicien en Énergies Renouvelables"
+    ],
+    "students_enrolled_count": 340,
+    "average_rating": 4.4,
+    "status": "active",
+    "institution": "Centre de Formation Technique",
+    "cost": 160000,
+    "language": "Français",
+    "certification": "Certificat de Technicien"
+  },
+  {
+    "title": "Journalisme et Communication Médias",
+    "description": "Formation complète en journalisme pour médias camerounais.",
+    "category": "Médias",
+    "instructor": "Journaliste Esther Kono",
+    "duration": "7 mois",
+    "prerequisites": [
+      "Licence en communication ou équivalent"
+    ],
+    "skills_gained": [
+      "Journalisme",
+      "Communication médiatique",
+      "Production audiovisuelle",
+      "Éthique journalistique"
+    ],
+    "related_careers": [
+      "Journaliste Bilingue"
+    ],
+    "students_enrolled_count": 210,
+    "average_rating": 4.3,
+    "status": "active",
+    "institution": "ESSTIC Yaoundé",
+    "cost": 190000,
+    "language": "Bilingue",
+    "certification": "Diplôme en Journalisme"
+  },
+  {
+    "title": "Géologie et Prospection Minière",
+    "description": "Formation en géologie appliquée à l'exploitation minière au Cameroun.",
+    "category": "Géosciences",
+    "instructor": "Dr. Georges Nlend",
+    "duration": "9 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Géologie",
+      "Prospection minière",
+      "Cartographie géologique",
+      "Analyse des sols"
+    ],
+    "related_careers": [
+      "Gestionnaire de Projets Miniers"
+    ],
+    "students_enrolled_count": 190,
+    "average_rating": 4.5,
+    "status": "active",
+    "institution": "Université de Ngaoundéré",
+    "cost": 230000,
+    "language": "Français",
+    "certification": "Diplôme en Géologie"
+  },
+  {
+    "title": "Entrepreneuriat et Innovation",
+    "description": "Formation à la création d'entreprise et au développement de projets innovants.",
+    "category": "Business",
+    "instructor": "Entrepreneur Richard Makon",
+    "duration": "5 mois",
+    "prerequisites": [
+      "Niveau secondaire"
+    ],
+    "skills_gained": [
+      "Entrepreneuriat",
+      "Business planning",
+      "Marketing digital",
+      "Gestion financière"
+    ],
+    "related_careers": [
+      "Entrepreneur en Transformation Agro-alimentaire",
+      "Spécialiste en Marketing Digital"
+    ],
+    "students_enrolled_count": 380,
+    "average_rating": 4.7,
+    "status": "active",
+    "institution": "Incubateur PEA-Jeunes",
+    "cost": 90000,
+    "language": "Bilingue",
+    "certification": "Certificat en Entrepreneuriat"
+  },
+  {
+    "title": "Architecture Logicielle Cloud",
+    "description": "Formation avancée en conception d'architectures logicielles modernes.",
+    "category": "Informatique",
+    "instructor": "Architecte David Mbappe",
+    "duration": "6 mois",
+    "prerequisites": [
+      "Expérience en développement"
+    ],
+    "skills_gained": [
+      "Architecture logicielle",
+      "Cloud computing",
+      "Sécurité informatique",
+      "DevOps"
+    ],
+    "related_careers": [
+      "Architecte Logiciel"
+    ],
+    "students_enrolled_count": 150,
+    "average_rating": 4.8,
+    "status": "active",
+    "institution": "Digital Academy Cameroon",
+    "cost": 280000,
+    "language": "Anglais",
+    "certification": "Certificat d'Architecte"
+  },
+  {
+    "title": "Marketing Digital et Réseaux Sociaux",
+    "description": "Stratégies digitales pour entreprises camerounaises.",
+    "category": "Marketing",
+    "instructor": "Expert Digital Carine Ngono",
+    "duration": "4 mois",
+    "prerequisites": [
+      "Bases en marketing"
+    ],
+    "skills_gained": [
+      "Marketing digital",
+      "Gestion des réseaux sociaux",
+      "SEO et analytics",
+      "Stratégie de contenu"
+    ],
+    "related_careers": [
+      "Spécialiste en Marketing Digital",
+      "Entrepreneur en Transformation Agro-alimentaire"
+    ],
+    "students_enrolled_count": 410,
+    "average_rating": 4.6,
+    "status": "active",
+    "institution": "Agence de Publicité Digitale",
+    "cost": 170000,
+    "language": "Français",
+    "certification": "Certificat en Marketing Digital"
+  },
+  {
+    "title": "Génie Civil et Techniques de Construction",
+    "description": "Formation technique en construction et infrastructures.",
+    "category": "Génie Civil",
+    "instructor": "Ing. Robert Zang",
+    "duration": "8 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Calcul structurel",
+      "Gestion de chantier",
+      "Dessin technique",
+      "Normes de construction"
+    ],
+    "related_careers": [
+      "Ingénieur en Génie Civil"
+    ],
+    "students_enrolled_count": 260,
+    "average_rating": 4.4,
+    "status": "active",
+    "institution": "École Polytechnique de Yaoundé",
+    "cost": 210000,
+    "language": "Français",
+    "certification": "Diplôme de Technicien"
+  },
+  {
+    "title": "Commerce International et Douanes",
+    "description": "Formation aux procédures douanières et au commerce international.",
+    "category": "Commerce",
+    "instructor": "Expert Douanier Mohamed Ali",
+    "duration": "5 mois",
+    "prerequisites": [
+      "Licence en économie ou commerce"
+    ],
+    "skills_gained": [
+      "Douanes et logistique",
+      "Procédures d'import-export",
+      "Négociation internationale",
+      "Droit commercial"
+    ],
+    "related_careers": [
+      "Expert en Commerce International"
+    ],
+    "students_enrolled_count": 220,
+    "average_rating": 4.3,
+    "status": "active",
+    "institution": "Université de Douala",
+    "cost": 180000,
+    "language": "Bilingue",
+    "certification": "Certificat en Commerce International"
+  },
+  {
+    "title": "Transformation Agro-alimentaire",
+    "description": "Techniques de transformation et conservation des produits agricoles.",
+    "category": "Agro-industrie",
+    "instructor": "Technologue Arlette Kameni",
+    "duration": "6 mois",
+    "prerequisites": [
+      "Baccalauréat scientifique"
+    ],
+    "skills_gained": [
+      "Transformation alimentaire",
+      "Technologies alimentaires",
+      "Contrôle qualité",
+      "Emballage et conservation"
+    ],
+    "related_careers": [
+      "Entrepreneur en Transformation Agro-alimentaire",
+      "Ingénieur Agronome"
+    ],
+    "students_enrolled_count": 190,
+    "average_rating": 4.5,
+    "status": "active",
+    "institution": "Institut de Recherche Agricole",
+    "cost": 160000,
+    "language": "Français",
+    "certification": "Certificat de Technologie Alimentaire"
+  }
+]

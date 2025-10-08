@@ -1,36 +1,366 @@
-{
-  "skills": [
-    {
-      "name": "Agriculture durable",
-      "description": "Techniques agricoles respectueuses de l'environnement adaptées au climat camerounais",
-      "category": "Agriculture",
-      "related_courses": [
-        "Agriculture et Agro-industrie"
-      ]
-    },
-    {
-      "name": "Développement mobile Android",
-      "description": "Création d'applications Android pour le marché camerounais",
-      "category": "Technologie",
-      "related_courses": [
-        "Informatique et Développement Logiciel"
-      ]
-    },
-    {
-      "name": "Procédures douanières CEMAC",
-      "description": "Connaissance des réglementations douanières de la Communauté Économique des États de l'Afrique Centrale",
-      "category": "Commerce",
-      "related_courses": [
-        "Commerce International et Douanes"
-      ]
-    },
-    {
-      "name": "Gestion de projets agricoles",
-      "description": "Planification et gestion de projets dans le secteur agricole camerounais",
-      "category": "Management",
-      "related_courses": [
-        "Agriculture et Agro-industrie"
-      ]
-    }
-  ]
-}
+[
+  {
+    "name": "Analyse biologique",
+    "description": "Techniques de laboratoire pour l’étude des cellules, tissus et micro-organismes",
+    "category": "Biologie",
+    "related_courses": [
+      "Biologie et Sciences de la Vie"
+    ],
+    "related_careers": [
+      "Infirmier(ère) Spécialisé(e)",
+      "Expert en Tourisme Écologique"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Chimie analytique",
+    "description": "Méthodes pour analyser la composition des substances chimiques",
+    "category": "Chimie",
+    "related_courses": [
+      "Chimie Générale et Appliquée"
+    ],
+    "related_careers": [
+      "Ingénieur Agronome",
+      "Technicien en Énergies Renouvelables"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Modélisation physique",
+    "description": "Application des lois de la physique à la modélisation de phénomènes naturels et techniques",
+    "category": "Physique",
+    "related_courses": [
+      "Physique Fondamentale et Appliquée"
+    ],
+    "related_careers": [
+      "Ingénieur en Télécommunications",
+      "Ingénieur en Génie Civil"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Analyse statistique",
+    "description": "Utilisation des mathématiques pour traiter et interpréter des données complexes",
+    "category": "Mathématiques",
+    "related_courses": [
+      "Mathématiques Avancées et Statistiques"
+    ],
+    "related_careers": [
+      "Analyste Financier",
+      "Architecte Logiciel",
+      "Gestionnaire de Projets Miniers"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Développement web fullstack",
+    "description": "Conception et programmation d’applications web complètes côté client et serveur",
+    "category": "Informatique",
+    "related_courses": [
+      "Informatique et Développement Logiciel"
+    ],
+    "related_careers": [
+      "Développeur Logiciel",
+      "Architecte Logiciel",
+      "Spécialiste en Marketing Digital"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Agronomie",
+    "description": "Science et techniques de la production agricole sous les climats tropicaux",
+    "category": "Agriculture",
+    "related_courses": [
+      "Agronomie Tropicale",
+      "Sciences du Sol"
+    ],
+    "related_careers": [
+      "Ingénieur Agronome",
+      "Entrepreneur en Transformation Agro-alimentaire"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Gestion de projet",
+    "description": "Planification, exécution et contrôle des projets dans divers domaines",
+    "category": "Management",
+    "related_courses": [
+      "Gestion de Projets",
+      "Administration des Affaires"
+    ],
+    "related_careers": [
+      "Ingénieur Agronome",
+      "Gestionnaire de Projets Miniers",
+      "Ingénieur en Télécommunications"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Programmation Python",
+    "description": "Développement d'applications en utilisant le langage Python",
+    "category": "Informatique",
+    "related_courses": [
+      "Programmation Avancée",
+      "Intelligence Artificielle"
+    ],
+    "related_careers": [
+      "Développeur Logiciel",
+      "Architecte Logiciel",
+      "Analyste Financier"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Bilinguisme français-anglais",
+    "description": "Maîtrise professionnelle du français et de l'anglais",
+    "category": "Langues",
+    "related_courses": [
+      "Traduction et Interprétation",
+      "Communication Bilingue"
+    ],
+    "related_careers": [
+      "Journaliste Bilingue",
+      "Expert en Commerce International",
+      "Enseignant du Secondaire"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Soins patients",
+    "description": "Techniques de soins et d'assistance médicale aux patients",
+    "category": "Santé",
+    "related_courses": [
+      "Sciences Infirmières",
+      "Soins de Santé Primaires"
+    ],
+    "related_careers": [
+      "Infirmier(ère) Spécialisé(e)"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Pédagogie",
+    "description": "Méthodes et techniques d'enseignement et d'apprentissage",
+    "category": "Éducation",
+    "related_courses": [
+      "Sciences de l'Éducation",
+      "Didactique des Disciplines"
+    ],
+    "related_careers": [
+      "Enseignant du Secondaire"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Réseaux mobiles",
+    "description": "Conception et gestion des réseaux de téléphonie mobile",
+    "category": "Télécommunications",
+    "related_courses": [
+      "Réseaux et Télécommunications",
+      "Ingénierie des Réseaux"
+    ],
+    "related_careers": [
+      "Ingénieur en Télécommunications"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Écotourisme",
+    "description": "Développement du tourisme respectueux de l'environnement",
+    "category": "Tourisme",
+    "related_courses": [
+      "Gestion Touristique",
+      "Développement Durable"
+    ],
+    "related_careers": [
+      "Expert en Tourisme Écologique"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Analyse financière",
+    "description": "Évaluation des performances et risques financiers des entreprises",
+    "category": "Finance",
+    "related_courses": [
+      "Analyse Financière",
+      "Gestion Financière"
+    ],
+    "related_careers": [
+      "Analyste Financier"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Systèmes solaires",
+    "description": "Installation et maintenance de panneaux solaires et systèmes photovoltaïques",
+    "category": "Énergie",
+    "related_courses": [
+      "Énergies Renouvelables",
+      "Technologies Solaires"
+    ],
+    "related_careers": [
+      "Technicien en Énergies Renouvelables"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Journalisme",
+    "description": "Techniques de reportage, d'investigation et de communication médiatique",
+    "category": "Médias",
+    "related_courses": [
+      "Journalisme et Communication",
+      "Production Audiovisuelle"
+    ],
+    "related_careers": [
+      "Journaliste Bilingue"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Géologie",
+    "description": "Étude des sols, roches et ressources minières",
+    "category": "Géosciences",
+    "related_courses": [
+      "Géologie Appliquée",
+      "Sciences de la Terre"
+    ],
+    "related_careers": [
+      "Gestionnaire de Projets Miniers"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Entrepreneuriat",
+    "description": "Création et gestion d'entreprises innovantes",
+    "category": "Business",
+    "related_courses": [
+      "Entrepreneuriat et Innovation",
+      "Gestion d'Entreprise"
+    ],
+    "related_careers": [
+      "Entrepreneur en Transformation Agro-alimentaire",
+      "Spécialiste en Marketing Digital"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Architecture logicielle",
+    "description": "Conception des structures et patterns des systèmes logiciels",
+    "category": "Informatique",
+    "related_courses": [
+      "Architecture des Systèmes",
+      "Conception Logicielle"
+    ],
+    "related_careers": [
+      "Architecte Logiciel"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Marketing digital",
+    "description": "Stratégies de promotion en ligne et gestion des médias sociaux",
+    "category": "Marketing",
+    "related_courses": [
+      "Marketing Digital",
+      "Stratégies en Ligne"
+    ],
+    "related_careers": [
+      "Spécialiste en Marketing Digital",
+      "Entrepreneur en Transformation Agro-alimentaire"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Calcul structurel",
+    "description": "Dimensionnement et vérification des structures de construction",
+    "category": "Génie Civil",
+    "related_courses": [
+      "Mécanique des Structures",
+      "Résistance des Matériaux"
+    ],
+    "related_careers": [
+      "Ingénieur en Génie Civil"
+    ],
+    "demand_level": "High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Douanes et logistique",
+    "description": "Procédures douanières et gestion de la chaîne d'approvisionnement",
+    "category": "Commerce",
+    "related_courses": [
+      "Commerce International",
+      "Logistique et Transport"
+    ],
+    "related_careers": [
+      "Expert en Commerce International"
+    ],
+    "demand_level": "Medium",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Gestion de chantier",
+    "description": "Organisation et supervision des travaux de construction",
+    "category": "BTP",
+    "related_courses": [
+      "Gestion de Chantier",
+      "Techniques de Construction"
+    ],
+    "related_careers": [
+      "Ingénieur en Génie Civil",
+      "Gestionnaire de Projets Miniers"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Sécurité informatique",
+    "description": "Protection des systèmes et données contre les cybermenaces",
+    "category": "Informatique",
+    "related_courses": [
+      "Cybersécurité",
+      "Sécurité des Réseaux"
+    ],
+    "related_careers": [
+      "Architecte Logiciel",
+      "Développeur Logiciel"
+    ],
+    "demand_level": "Very High",
+    "difficulty": "Advanced"
+  },
+  {
+    "name": "Transformation alimentaire",
+    "description": "Techniques de conservation et transformation des produits agricoles",
+    "category": "Agro-industrie",
+    "related_courses": [
+      "Technologies Alimentaires",
+      "Transformation des Produits"
+    ],
+    "related_careers": [
+      "Entrepreneur en Transformation Agro-alimentaire",
+      "Ingénieur Agronome"
+    ],
+    "demand_level": "High",
+    "difficulty": "Intermediate"
+  }
+]

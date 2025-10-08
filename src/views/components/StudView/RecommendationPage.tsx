@@ -254,139 +254,140 @@ const RecommendationPage: React.FC = () => {
 
         {/* Recommendations List */}
         <div className="space-y-6">
-          {filteredRecommendations.length > 0 ? (
-            filteredRecommendations.map((recommendation, index) => (
-              <div key={recommendation.id} className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
-                {/* Recommendation Header */}
-                <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-bold text-slate-800 capitalize">
-                          {recommendation.type} Recommendations
-                        </h3>
-                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                          recommendation.status === 'Generated' 
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-blue-100 text-blue-700'
-                        }`}>
-                          {recommendation.status}
-                        </span>
-                      </div>
-                      <p className="text-slate-600">{recommendation.summary}</p>
+  {filteredRecommendations.length > 0 ? (
+    filteredRecommendations.map((recommendation, index) => (
+      <div key={recommendation.id} className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+        {/* Recommendation Header */}
+        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h3 className="text-xl font-bold text-gray-900 capitalize">
+                  {recommendation.type} Recommendations
+                </h3>
+                <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                  recommendation.status === 'Generated' 
+                    ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                    : 'bg-blue-100 text-blue-700 border border-blue-200'
+                }`}>
+                  {recommendation.status}
+                </span>
+              </div>
+              <p className="text-gray-700">{recommendation.summary}</p>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center gap-2 mb-2">
+                <Star className="h-5 w-5 text-amber-500" />
+                <span className="text-2xl font-bold text-gray-900">
+                  {recommendation.match_score}%
+                </span>
+              </div>
+              <div className="flex items-center gap-1 text-sm text-gray-600">
+                <Clock className="h-4 w-4" />
+                Generated {formatDate(recommendation.created_at)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recommendation Content */}
+        <div className="p-6">
+          {/* Skills Section */}
+          {recommendation.suggested_skills.length > 0 && (
+            <div className="mb-8">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Star className="h-5 w-5 text-amber-500" />
+                Recommended Skills
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {recommendation.suggested_skills.map((skill, skillIndex) => (
+                  <div key={skillIndex} className="p-4 border border-gray-200 rounded-xl bg-white hover:border-blue-300 transition-colors duration-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="font-semibold text-gray-900">{skill.skill_name}</span>
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getPriorityColor(skill.priority)}`}>
+                        {skill.priority} Priority
+                      </span>
                     </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Star className="h-5 w-5 text-yellow-500" />
-                        <span className="text-2xl font-bold text-slate-800">
-                          {recommendation.match_score}%
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-slate-500">
-                        <Clock className="h-4 w-4" />
-                        Generated {formatDate(recommendation.created_at)}
-                      </div>
+                    <p className="text-sm text-gray-600 mb-3">{skill.description}</p>
+                    <div className="mt-2">
+                      <span className="text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                        {skill.category}
+                      </span>
                     </div>
                   </div>
-                </div>
-
-                {/* Recommendation Content */}
-                <div className="p-6">
-                  {/* Skills Section */}
-                  {recommendation.suggested_skills.length > 0 && (
-                    <div className="mb-6">
-                      <h4 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                        <Star className="h-5 w-5 text-yellow-500" />
-                        Recommended Skills
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {recommendation.suggested_skills.map((skill, skillIndex) => (
-                          <div key={skillIndex} className="p-3 border border-slate-200 rounded-lg">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-medium text-slate-800">{skill.skill_name}</span>
-                              <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(skill.priority)}`}>
-                                {skill.priority} Priority
-                              </span>
-                            </div>
-                            <p className="text-sm text-slate-600">{skill.description}</p>
-                            <div className="mt-2">
-                              <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">
-                                {skill.category}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Courses Section */}
-                  {recommendation.recommended_courses.length > 0 && (
-                    <div>
-                      <h4 className="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                        <BookOpen className="h-5 w-5 text-blue-500" />
-                        Recommended Courses
-                      </h4>
-                      <div className="space-y-3">
-                        {recommendation.recommended_courses.map((course, courseIndex) => (
-                          <div key={courseIndex} className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                            <div className="flex items-center justify-between mb-2">
-                              <h5 className="font-semibold text-slate-800">{course.course_title}</h5>
-                              <div className="flex items-center gap-2">
-                                <Star className="h-4 w-4 text-yellow-500" />
-                                <span className="text-sm font-medium">{course.rating}/5.0</span>
-                              </div>
-                            </div>
-                            <p className="text-sm text-slate-600 mb-2">{course.instructor} • {course.duration}</p>
-                            <div className="flex flex-wrap gap-1 mb-3">
-                              {course.skills_covered.slice(0, 3).map((skill, idx) => (
-                                <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                                  {skill}
-                                </span>
-                              ))}
-                              {course.skills_covered.length > 3 && (
-                                <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">
-                                  +{course.skills_covered.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                            <button className="text-blue-600 text-sm hover:underline flex items-center gap-1">
-                              View Course Details <ArrowUpRight className="h-3 w-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                ))}
               </div>
-            ))
-          ) : (
-            /* Empty State */
-            <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-12 text-center">
-              <Lightbulb className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">No Recommendations Yet</h3>
-              <p className="text-slate-600 mb-6">
-                {selectedTab !== 'all' 
-                  ? `No ${selectedTab} recommendations found. Try generating new recommendations or check other categories.`
-                  : "You don't have any AI recommendations yet. Generate your first set of personalized recommendations!"
-                }
-              </p>
-              <button
-                onClick={generateNewRecommendations}
-                disabled={generating}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mx-auto"
-              >
-                {generating ? (
-                  <Loader2 className="animate-spin h-5 w-5" />
-                ) : (
-                  <Zap className="h-5 w-5" />
-                )}
-                {generating ? 'Generating...' : 'Generate Recommendations'}
-              </button>
+            </div>
+          )}
+
+          {/* Courses Section */}
+          {recommendation.recommended_courses.length > 0 && (
+            <div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-blue-500" />
+                Recommended Courses
+              </h4>
+              <div className="space-y-4">
+                {recommendation.recommended_courses.map((course, courseIndex) => (
+                  <div key={courseIndex} className="p-5 border border-gray-200 rounded-xl bg-white hover:border-blue-300 hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <h5 className="font-semibold text-gray-900 text-lg">{course.course_title}</h5>
+                      <div className="flex items-center gap-2 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                        <Star className="h-4 w-4 text-amber-500" />
+                        <span className="text-sm font-semibold text-amber-700">{course.rating}/5.0</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">{course.instructor} • {course.duration}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {course.skills_covered.slice(0, 3).map((skill, idx) => (
+                        <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full border border-blue-200">
+                          {skill}
+                        </span>
+                      ))}
+                      {course.skills_covered.length > 3 && (
+                        <span className="px-3 py-1 bg-gray-100 text-gray-600 text-sm rounded-full border border-gray-200">
+                          +{course.skills_covered.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                    <button className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline flex items-center gap-2 transition-colors duration-200">
+                      View Course Details 
+                      <ArrowUpRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
+      </div>
+    ))
+  ) : (
+    /* Empty State */
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-12 text-center">
+      <Lightbulb className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">No Recommendations Yet</h3>
+      <p className="text-gray-600 mb-6 max-w-md mx-auto">
+        {selectedTab !== 'all' 
+          ? `No ${selectedTab} recommendations found. Try generating new recommendations or check other categories.`
+          : "You don't have any AI recommendations yet. Generate your first set of personalized recommendations!"
+        }
+      </p>
+      <button
+        onClick={generateNewRecommendations}
+        disabled={generating}
+        className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl mx-auto font-semibold"
+      >
+        {generating ? (
+          <Loader2 className="animate-spin h-5 w-5" />
+        ) : (
+          <Zap className="h-5 w-5" />
+        )}
+        {generating ? 'Generating...' : 'Generate Recommendations'}
+      </button>
+    </div>
+  )}
+</div>
       </div>
     </div>
   );

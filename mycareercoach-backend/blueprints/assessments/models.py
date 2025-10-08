@@ -131,14 +131,215 @@ class AssessmentResult:
         self._id = result.inserted_id
         return self._id
 
-    def to_dict(self):
-        doc = {k: v for k, v in self.__dict__.items()}
-        doc['id'] = str(doc['_id'])
-        doc['_id'] = str(doc['_id'])
-        doc['student_id'] = str(doc['student_id'])
-        doc['assessment_id'] = str(doc['assessment_id'])
-        doc['submission_date'] = doc['submission_date'].isoformat()
-        doc['created_at'] = doc['created_at'].isoformat()
-        doc['updated_at'] = doc['updated_at'].isoformat()
-        # Convert any embedded ObjectIds within answers if necessary
+    @classmethod
+    def find_by_student_id(cls, student_id, include_assessment_details=True):
+        """Find all assessment results for a student"""
+        try:
+            # Base query to get assessment results
+            results_cursor = mongo.db.assessment_results.find(
+                {"student_id": ObjectId(student_id)}
+            ).sort("submission_date", -1)
+            
+            results_list = []
+            for res_data in results_cursor:
+                # Prepare kwargs for constructor
+                kwargs = res_data.copy()
+                
+                # Remove fields that will be passed as explicit parameters
+                fields_to_remove = ["student_id", "assessment_id", "submission_date", "answers"]
+                for field in fields_to_remove:
+                    kwargs.pop(field, None)
+                
+                # Create AssessmentResult instance
+                res_obj = cls(
+                    student_id=str(res_data['student_id']),
+                    assessment_id=str(res_data['assessment_id']),
+                    submission_date=res_data['submission_date'],
+                    answers=res_data.get('answers', []),
+                    **kwargs
+                )
+                
+                # Set the _id
+                res_obj._id = res_data['_id']
+                
+                # Fetch and include assessment details if requested
+                if include_assessment_details:
+                    assessment = mongo.db.assessments.find_one(
+                        {"_id": ObjectId(res_data['assessment_id'])}
+                    )
+                    if assessment:
+                        res_obj.assessment_details = {
+                            'name': assessment.get('name', 'Unknown Assessment'),
+                            'description': assessment.get('description', ''),
+                            'type': assessment.get('type', 'unknown'),
+                            'duration_minutes': assessment.get('duration_minutes', 0),
+                            'number_of_questions': assessment.get('number_of_questions', 0)
+                        }
+                
+                results_list.append(res_obj)
+            
+            print(f"Found {len(results_list)} assessment results for student {student_id}")
+            return results_list
+            
+        except Exception as e:
+            print(f"Error finding assessment results for student {student_id}: {e}")
+            return []
+
+
+    @classmethod
+    def find_by_student_and_assessment(cls, student_id, assessment_id):
+        """Find a specific assessment result for a student"""
+        try:
+            res_data = mongo.db.assessment_results.find_one({
+                "student_id": ObjectId(student_id),
+                "assessment_id": ObjectId(assessment_id)
+            })
+            
+            if not res_data:
+                return None
+            
+            # Prepare kwargs for constructor
+            kwargs = res_data.copy()
+            fields_to_remove = ["student_id", "assessment_id", "submission_date", "answers"]
+            for field in fields_to_remove:
+                kwargs.pop(field, None)
+            
+            # Create AssessmentResult instance
+            res_obj = cls(
+                student_id=str(res_data['student_id']),
+                assessment_id=str(res_data['assessment_id']),
+                submission_date=res_data['submission_date'],
+                answers=res_data.get('answers', []),
+                **kwargs
+            )
+            
+            # Set the _id
+            res_obj._id = res_data['_id']
+            
+            return res_obj
+            
+        except Exception as e:
+            print(f"Error finding assessment result: {e}")
+            return None
+
+    @classmethod
+    def get_recent_results(cls, student_id, limit=5):
+        """Get most recent assessment results for a student"""
+        try:
+            results_cursor = mongo.db.assessment_results.find({
+                "student_id": ObjectId(student_id)
+            }).sort("submission_date", -1).limit(limit)
+            
+            results_list = []
+            for res_data in results_cursor:
+                # Prepare kwargs for constructor
+                kwargs = res_data.copy()
+                fields_to_remove = ["student_id", "assessment_id", "submission_date", "answers"]
+                for field in fields_to_remove:
+                    kwargs.pop(field, None)
+                
+                # Create AssessmentResult instance
+                res_obj = cls(
+                    student_id=str(res_data['student_id']),
+                    assessment_id=str(res_data['assessment_id']),
+                    submission_date=res_data['submission_date'],
+                    answers=res_data.get('answers', []),
+                    **kwargs
+                )
+                
+                # Set the _id
+                res_obj._id = res_data['_id']
+                results_list.append(res_obj)
+            
+            return results_list
+            
+        except Exception as e:
+            print(f"Error getting recent assessment results: {e}")
+            return []
+
+
+    @classmethod
+    def get_recent_results(cls, student_id, limit=5):
+        """Get most recent assessment results for a student"""
+        try:
+            results = mongo.db[cls.collection_name].find({
+                "student_id": ObjectId(student_id)
+            }).sort("submission_date", -1).limit(limit)
+            
+            return [cls(
+                student_id=result['student_id'],
+                assessment_id=result['assessment_id'],
+                submission_date=result['submission_date'],
+                answers=result.get('answers', []),
+                score=result.get('score', 0),
+                total_points_possible=result.get('total_points_possible', 0),
+                insights=result.get('insights', {}),
+                _id=result.get('_id')
+            ) for result in results]
+            
+        except Exception as e:
+            print(f"Error getting recent assessment results: {e}")
+            return []
+
+    def to_dict(self, include_assessment_details=False):
+        """Convert to dictionary with optional assessment details"""
+        doc = {k: v for k, v in self.__dict__.items() if not k.startswith('_') and k != 'assessment_details'}
+        
+        # Convert ObjectIds to strings
+        if hasattr(self, '_id') and self._id:
+            doc['id'] = str(self._id)
+            doc['_id'] = str(self._id)
+        
+        doc['student_id'] = str(self.student_id)
+        doc['assessment_id'] = str(self.assessment_id)
+        doc['submission_date'] = self.submission_date.isoformat() if hasattr(self.submission_date, 'isoformat') else self.submission_date
+        doc['created_at'] = self.created_at.isoformat() if hasattr(self.created_at, 'isoformat') else self.created_at
+        doc['updated_at'] = self.updated_at.isoformat() if hasattr(self.updated_at, 'isoformat') else self.updated_at
+        
+        # Include assessment details if available and requested
+        if include_assessment_details and hasattr(self, 'assessment_details'):
+            doc['assessment_details'] = self.assessment_details
+        
         return doc
+
+    @classmethod
+    def get_assessment_statistics(cls, student_id):
+        """Get statistics about student's assessment performance"""
+        try:
+            pipeline = [
+                {
+                    "$match": {
+                        "student_id": ObjectId(student_id)
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "assessments",
+                        "localField": "assessment_id",
+                        "foreignField": "_id",
+                        "as": "assessment_details"
+                    }
+                },
+                {
+                    "$unwind": "$assessment_details"
+                },
+                {
+                    "$group": {
+                        "_id": "$assessment_details.type",
+                        "average_score": {"$avg": "$score"},
+                        "total_assessments": {"$sum": 1},
+                        "total_points": {"$sum": "$total_points_possible"},
+                        "recent_submission": {"$max": "$submission_date"}
+                    }
+                }
+            ]
+            
+            return list(mongo.db[cls.collection_name].aggregate(pipeline))
+            
+        except Exception as e:
+            print(f"Error getting assessment statistics: {e}")
+            return []
+
+
+
+            # mongorestore --uri="mongodb://localhost:27017" database

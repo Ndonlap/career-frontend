@@ -254,8 +254,9 @@ class Recommendation:
         self.generated_by = kwargs.get('generated_by', 'AI')
         self.recommended_courses = kwargs.get('recommended_courses', []) # List of dicts or ObjectId strings
         self.suggested_skills = kwargs.get('suggested_skills', []) # List of dicts or ObjectId strings
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.created_at = kwargs.get('created_at',datetime.utcnow())
+        self.updated_at = kwargs.get('updated_at',datetime.utcnow())
+        # self.updated_at = datetime.utcnow()
         self._id = None
 
     def save(self):
