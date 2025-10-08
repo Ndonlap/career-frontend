@@ -84,6 +84,9 @@ def login():
         {"_id": user._id},
         {"$set": {"last_login_at": datetime.utcnow()}}
     )
+    print("user._id")
+    print(user._id)
+
     # Convert identity to JSON string
     identity_data = {'id': str(user._id), 'role': user.role}
     identity_str = json.dumps(identity_data)  # Convert to string
