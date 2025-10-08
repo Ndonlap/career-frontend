@@ -78,14 +78,10 @@ def login():
         return jsonify({"msg": "Bad username or password"}), 401
 
     # Update last_login_at
-    print("user")
-    print(user)
     mongo.db.users.update_one(
         {"_id": user._id},
         {"$set": {"last_login_at": datetime.utcnow()}}
     )
-    print("user._id")
-    print(user._id)
 
     # Convert identity to JSON string
     identity_data = {'id': str(user._id), 'role': user.role}
